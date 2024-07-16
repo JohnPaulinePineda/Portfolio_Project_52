@@ -24,8 +24,8 @@
     * [1.6 Predictive Model Development](#1.6)
         * [1.6.1 Premodelling Data Description](#1.6.1)
         * [1.6.2 Cox Regression with No Penalty](#1.6.2)
-        * [1.6.3 Cox Regression With Full L2 Penalty](#1.6.3)
-        * [1.6.4 Cox Regression With Full L1 Penalty](#1.6.4)
+        * [1.6.3 Cox Regression With Full L1 Penalty](#1.6.3)
+        * [1.6.4 Cox Regression With Full L2 Penalty](#1.6.4)
         * [1.6.5 Cox Regression With Equal L1|L2 Penalty](#1.6.5)
         * [1.6.6 Cox Regression With Predominantly L1-Weighted|L2 Penalty](#1.6.6)
         * [1.6.7 Cox Regression With Predominantly L2-Weighted|L1 Penalty](#1.6.7)
@@ -7997,7 +7997,7 @@ for group in risk_groups.unique():
     kmf.fit(group_data['N_Days'], event_observed=group_data['Status'], label=group)
     kmf.plot_survival_function()
 
-plt.title('COXPH Survival Probabilities by Predicted Risk Groups')
+plt.title('COXPH_NP Survival Probabilities by Predicted Risk Groups')
 plt.xlabel('N_Days')
 plt.ylabel('Event Survival Probability')
 plt.show()
@@ -8282,7 +8282,6 @@ axes[1].set_ylabel('Cumulative Hazard')
 axes[1].legend(test_case_labels, loc="upper left")
 plt.tight_layout()
 plt.show()
-    
 ```
 
 
@@ -8296,12 +8295,12 @@ plt.show()
 ##################################
 # Creating the explainer object
 ##################################
-cirrhosis_survival_coxph_explainer = shap.Explainer(cirrhosis_survival_coxph_L1_0_L2_0.predict_partial_hazard, 
+cirrhosis_survival_coxph_L1_0_L2_0_explainer = shap.Explainer(cirrhosis_survival_coxph_L1_0_L2_0.predict_partial_hazard, 
                                                     cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
-cirrhosis_survival_coxph_shap_values = cirrhosis_survival_coxph_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
+cirrhosis_survival_coxph_L1_0_L2_0_shap_values = cirrhosis_survival_coxph_L1_0_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:18,  6.82it/s]                         
+    PermutationExplainer explainer: 219it [00:27,  6.52it/s]                         
     
 
 
@@ -8309,7 +8308,7 @@ cirrhosis_survival_coxph_shap_values = cirrhosis_survival_coxph_explainer(cirrho
 ##################################
 # Plotting the SHAP summary plot
 ##################################
-shap.summary_plot(cirrhosis_survival_coxph_shap_values, 
+shap.summary_plot(cirrhosis_survival_coxph_L1_0_L2_0_shap_values, 
                   cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
@@ -8320,6 +8319,766 @@ shap.summary_plot(cirrhosis_survival_coxph_shap_values,
 
 
 ### 1.6.3 Cox Regression With Full L1 Penalty <a class="anchor" id="1.6.3"></a>
+
+
+
+```python
+##################################
+# Formulating the Cox Regression model
+# with Full L1 Penalty and generating the summary
+##################################
+cirrhosis_survival_coxph_L1_100_L2_0 = CoxPHFitter(penalizer=0.1, l1_ratio=1.0)
+cirrhosis_survival_coxph_L1_100_L2_0.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
+cirrhosis_survival_coxph_L1_100_L2_0.summary
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>coef</th>
+      <th>exp(coef)</th>
+      <th>se(coef)</th>
+      <th>coef lower 95%</th>
+      <th>coef upper 95%</th>
+      <th>exp(coef) lower 95%</th>
+      <th>exp(coef) upper 95%</th>
+      <th>cmp to</th>
+      <th>z</th>
+      <th>p</th>
+      <th>-log2(p)</th>
+    </tr>
+    <tr>
+      <th>covariate</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Age</th>
+      <td>1.019423e-01</td>
+      <td>1.107320</td>
+      <td>0.113381</td>
+      <td>-0.120280</td>
+      <td>0.324165</td>
+      <td>0.886672</td>
+      <td>1.382875</td>
+      <td>0.0</td>
+      <td>0.899114</td>
+      <td>0.368592</td>
+      <td>1.439903</td>
+    </tr>
+    <tr>
+      <th>Bilirubin</th>
+      <td>7.205550e-01</td>
+      <td>2.055574</td>
+      <td>0.155250</td>
+      <td>0.416270</td>
+      <td>1.024840</td>
+      <td>1.516295</td>
+      <td>2.786650</td>
+      <td>0.0</td>
+      <td>4.641247</td>
+      <td>0.000003</td>
+      <td>18.139495</td>
+    </tr>
+    <tr>
+      <th>Cholesterol</th>
+      <td>8.673029e-09</td>
+      <td>1.000000</td>
+      <td>0.000078</td>
+      <td>-0.000153</td>
+      <td>0.000153</td>
+      <td>0.999847</td>
+      <td>1.000153</td>
+      <td>0.0</td>
+      <td>0.000111</td>
+      <td>0.999911</td>
+      <td>0.000128</td>
+    </tr>
+    <tr>
+      <th>Albumin</th>
+      <td>-5.899624e-02</td>
+      <td>0.942710</td>
+      <td>0.132000</td>
+      <td>-0.317712</td>
+      <td>0.199719</td>
+      <td>0.727813</td>
+      <td>1.221060</td>
+      <td>0.0</td>
+      <td>-0.446941</td>
+      <td>0.654918</td>
+      <td>0.610614</td>
+    </tr>
+    <tr>
+      <th>Copper</th>
+      <td>2.602826e-02</td>
+      <td>1.026370</td>
+      <td>0.133726</td>
+      <td>-0.236070</td>
+      <td>0.288127</td>
+      <td>0.789725</td>
+      <td>1.333926</td>
+      <td>0.0</td>
+      <td>0.194639</td>
+      <td>0.845676</td>
+      <td>0.241823</td>
+    </tr>
+    <tr>
+      <th>Alk_Phos</th>
+      <td>6.649722e-08</td>
+      <td>1.000000</td>
+      <td>0.000088</td>
+      <td>-0.000172</td>
+      <td>0.000172</td>
+      <td>0.999828</td>
+      <td>1.000172</td>
+      <td>0.0</td>
+      <td>0.000757</td>
+      <td>0.999396</td>
+      <td>0.000872</td>
+    </tr>
+    <tr>
+      <th>SGOT</th>
+      <td>1.196063e-07</td>
+      <td>1.000000</td>
+      <td>0.000112</td>
+      <td>-0.000219</td>
+      <td>0.000219</td>
+      <td>0.999781</td>
+      <td>1.000219</td>
+      <td>0.0</td>
+      <td>0.001069</td>
+      <td>0.999147</td>
+      <td>0.001232</td>
+    </tr>
+    <tr>
+      <th>Tryglicerides</th>
+      <td>1.859293e-07</td>
+      <td>1.000000</td>
+      <td>0.000168</td>
+      <td>-0.000329</td>
+      <td>0.000330</td>
+      <td>0.999671</td>
+      <td>1.000330</td>
+      <td>0.0</td>
+      <td>0.001106</td>
+      <td>0.999118</td>
+      <td>0.001273</td>
+    </tr>
+    <tr>
+      <th>Platelets</th>
+      <td>-1.591429e-07</td>
+      <td>1.000000</td>
+      <td>0.000141</td>
+      <td>-0.000277</td>
+      <td>0.000277</td>
+      <td>0.999723</td>
+      <td>1.000277</td>
+      <td>0.0</td>
+      <td>-0.001127</td>
+      <td>0.999101</td>
+      <td>0.001298</td>
+    </tr>
+    <tr>
+      <th>Prothrombin</th>
+      <td>2.106760e-01</td>
+      <td>1.234512</td>
+      <td>0.130005</td>
+      <td>-0.044129</td>
+      <td>0.465481</td>
+      <td>0.956830</td>
+      <td>1.592780</td>
+      <td>0.0</td>
+      <td>1.620523</td>
+      <td>0.105120</td>
+      <td>3.249890</td>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <td>-2.885452e-08</td>
+      <td>1.000000</td>
+      <td>0.000157</td>
+      <td>-0.000308</td>
+      <td>0.000308</td>
+      <td>0.999692</td>
+      <td>1.000308</td>
+      <td>0.0</td>
+      <td>-0.000184</td>
+      <td>0.999853</td>
+      <td>0.000212</td>
+    </tr>
+    <tr>
+      <th>Sex</th>
+      <td>-2.332571e-07</td>
+      <td>1.000000</td>
+      <td>0.000274</td>
+      <td>-0.000538</td>
+      <td>0.000537</td>
+      <td>0.999462</td>
+      <td>1.000537</td>
+      <td>0.0</td>
+      <td>-0.000851</td>
+      <td>0.999321</td>
+      <td>0.000979</td>
+    </tr>
+    <tr>
+      <th>Ascites</th>
+      <td>1.608914e-01</td>
+      <td>1.174557</td>
+      <td>0.410628</td>
+      <td>-0.643925</td>
+      <td>0.965708</td>
+      <td>0.525227</td>
+      <td>2.626647</td>
+      <td>0.0</td>
+      <td>0.391818</td>
+      <td>0.695193</td>
+      <td>0.524514</td>
+    </tr>
+    <tr>
+      <th>Hepatomegaly</th>
+      <td>3.202570e-07</td>
+      <td>1.000000</td>
+      <td>0.000284</td>
+      <td>-0.000557</td>
+      <td>0.000557</td>
+      <td>0.999443</td>
+      <td>1.000558</td>
+      <td>0.0</td>
+      <td>0.001127</td>
+      <td>0.999101</td>
+      <td>0.001298</td>
+    </tr>
+    <tr>
+      <th>Spiders</th>
+      <td>1.774944e-07</td>
+      <td>1.000000</td>
+      <td>0.000208</td>
+      <td>-0.000407</td>
+      <td>0.000408</td>
+      <td>0.999593</td>
+      <td>1.000408</td>
+      <td>0.0</td>
+      <td>0.000854</td>
+      <td>0.999319</td>
+      <td>0.000983</td>
+    </tr>
+    <tr>
+      <th>Edema</th>
+      <td>1.676711e-01</td>
+      <td>1.182548</td>
+      <td>0.315894</td>
+      <td>-0.451471</td>
+      <td>0.786813</td>
+      <td>0.636691</td>
+      <td>2.196385</td>
+      <td>0.0</td>
+      <td>0.530782</td>
+      <td>0.595570</td>
+      <td>0.747657</td>
+    </tr>
+    <tr>
+      <th>Stage_4.0</th>
+      <td>3.156528e-02</td>
+      <td>1.032069</td>
+      <td>0.270735</td>
+      <td>-0.499066</td>
+      <td>0.562196</td>
+      <td>0.607098</td>
+      <td>1.754521</td>
+      <td>0.0</td>
+      <td>0.116591</td>
+      <td>0.907184</td>
+      <td>0.140533</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Plotting the hazard ratio of the
+# formulated Cox Regression model
+# with Full L1 Penalty
+##################################
+cirrhosis_survival_coxph_L1_100_L2_0_summary = cirrhosis_survival_coxph_L1_100_L2_0.summary
+cirrhosis_survival_coxph_L1_100_L2_0_summary['hazard_ratio'] = np.exp(cirrhosis_survival_coxph_L1_100_L2_0_summary['coef'])
+significant = cirrhosis_survival_coxph_L1_100_L2_0_summary['p'] < 0.05
+plt.figure(figsize=(17, 8))
+colors = ['#993300' if sig else '#CC9966' for sig in significant]
+
+plt.barh(cirrhosis_survival_coxph_L1_100_L2_0_summary.index, 
+         cirrhosis_survival_coxph_L1_100_L2_0_summary['hazard_ratio'], 
+         xerr=cirrhosis_survival_coxph_L1_100_L2_0_summary['se(coef)'], 
+         color=colors)
+plt.xlabel('Hazard Ratio')
+plt.ylabel('Variables')
+plt.title('COXPH_FL1P Hazard Ratio Forest Plot')
+plt.axvline(x=1, color='k', linestyle='--')
+plt.show()
+
+```
+
+
+    
+![png](output_176_0.png)
+    
+
+
+
+```python
+##################################
+# Plotting the coefficient magnitude
+# of the formulated Cox Regression model
+# with Full L1 Penalty
+##################################
+plt.figure(figsize=(17, 8))
+colors = ['#993300' if sig else '#CC9966' for sig in significant]
+cirrhosis_survival_coxph_L1_100_L2_0_summary['coef'].plot(kind='barh', color=colors)
+plt.xlabel('Variables')
+plt.ylabel('Model Coefficient Value')
+plt.title('COXPH_Fl1P Model Coefficients')
+plt.xticks(rotation=0, ha='right')
+plt.xlim(-1,1)
+plt.show()
+```
+
+
+    
+![png](output_177_0.png)
+    
+
+
+
+```python
+##################################
+# Gathering the apparent model performance
+# as baseline for evaluating overfitting
+##################################
+cirrhosis_survival_coxph_L1_100_L2_0.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
+train_predictions = cirrhosis_survival_coxph_L1_100_L2_0.predict_partial_hazard(cirrhosis_survival_train_modeling)
+cirrhosis_survival_coxph_L1_100_L2_0_train_ci_mean = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
+                                                                     -train_predictions, 
+                                                                     cirrhosis_survival_train_modeling['Status'])
+display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_100_L2_0_train_ci_mean}")
+```
+
+
+    'Apparent Concordance Index: 0.8313556566970091'
+
+
+
+```python
+##################################
+# Performing 5-Fold Cross-Validation
+# on the training data
+##################################
+kf = KFold(n_splits=5, shuffle=True, random_state=88888888)
+c_index_scores = []
+
+for train_index, val_index in kf.split(cirrhosis_survival_train_modeling):
+    df_train_fold = cirrhosis_survival_train_modeling.iloc[train_index]
+    df_val_fold = cirrhosis_survival_train_modeling.iloc[val_index]
+    
+    cirrhosis_survival_coxph_L1_100_L2_0.fit(df_train_fold, duration_col='N_Days', event_col='Status')
+    val_predictions = cirrhosis_survival_coxph_L1_100_L2_0.predict_partial_hazard(df_val_fold)
+    c_index = concordance_index(df_val_fold['N_Days'], -val_predictions, df_val_fold['Status'])
+    c_index_scores.append(c_index)
+
+cirrhosis_survival_coxph_L1_100_L2_0_cv_ci_mean = np.mean(c_index_scores)
+cirrhosis_survival_coxph_L1_100_L2_0_cv_ci_std = np.std(c_index_scores)
+
+display(f"Cross-Validated Concordance Index: {cirrhosis_survival_coxph_L1_100_L2_0_cv_ci_mean}")
+```
+
+
+    'Cross-Validated Concordance Index: 0.8111973914136674'
+
+
+
+```python
+##################################
+# Evaluating the model performance
+# on test data
+##################################
+test_predictions = cirrhosis_survival_coxph_L1_100_L2_0.predict_partial_hazard(cirrhosis_survival_test_modeling)
+cirrhosis_survival_coxph_L1_100_L2_0_test_ci_mean = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
+                                                                     -test_predictions, 
+                                                                     cirrhosis_survival_test_modeling['Status'])
+display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_100_L2_0_test_ci_mean}")
+```
+
+
+    'Test Concordance Index: 0.8426303854875283'
+
+
+
+```python
+##################################
+# Binning the predicted risks
+# into dichotomous groups and
+# exploring the relationships with
+# survival event and duration
+##################################
+cirrhosis_survival_test_modeling['Predicted_Risks_COXPH_FL1P'] = test_predictions
+cirrhosis_survival_test_modeling['Predicted_RiskGroups_COXPH_FL1P'] = risk_groups = pd.qcut(cirrhosis_survival_test_modeling['Predicted_Risks_COXPH_FL1P'], 2, labels=['Low-Risk', 'High-Risk'])
+
+plt.figure(figsize=(17, 8))
+for group in risk_groups.unique():
+    group_data = cirrhosis_survival_test_modeling[risk_groups == group]
+    kmf.fit(group_data['N_Days'], event_observed=group_data['Status'], label=group)
+    kmf.plot_survival_function()
+
+plt.title('COXPH_FL1P Survival Probabilities by Predicted Risk Groups')
+plt.xlabel('N_Days')
+plt.ylabel('Event Survival Probability')
+plt.show()
+```
+
+
+    
+![png](output_181_0.png)
+    
+
+
+
+```python
+##################################
+# Gathering the predictor information
+# for 5 test case samples
+##################################
+test_case_details = cirrhosis_survival_test_modeling.iloc[[0,1,10, 20, 30, 40, 50]]
+display(test_case_details)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Status</th>
+      <th>N_Days</th>
+      <th>Age</th>
+      <th>Bilirubin</th>
+      <th>Cholesterol</th>
+      <th>Albumin</th>
+      <th>Copper</th>
+      <th>Alk_Phos</th>
+      <th>SGOT</th>
+      <th>Tryglicerides</th>
+      <th>...</th>
+      <th>Sex</th>
+      <th>Ascites</th>
+      <th>Hepatomegaly</th>
+      <th>Spiders</th>
+      <th>Edema</th>
+      <th>Stage_4.0</th>
+      <th>Predicted_Risks_COXPH_NP</th>
+      <th>Predicted_RiskGroups_COXPH_NP</th>
+      <th>Predicted_Risks_COXPH_FL1P</th>
+      <th>Predicted_RiskGroups_COXPH_FL1P</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>False</td>
+      <td>3336</td>
+      <td>1.043704</td>
+      <td>0.744396</td>
+      <td>0.922380</td>
+      <td>0.240951</td>
+      <td>0.045748</td>
+      <td>0.317282</td>
+      <td>-0.078335</td>
+      <td>2.671950</td>
+      <td>...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4.640359</td>
+      <td>High-Risk</td>
+      <td>1.957525</td>
+      <td>High-Risk</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>False</td>
+      <td>1321</td>
+      <td>-1.936476</td>
+      <td>-0.764558</td>
+      <td>0.160096</td>
+      <td>-0.600950</td>
+      <td>-0.179138</td>
+      <td>-0.245613</td>
+      <td>0.472422</td>
+      <td>-0.359800</td>
+      <td>...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.321064</td>
+      <td>Low-Risk</td>
+      <td>0.582238</td>
+      <td>Low-Risk</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>True</td>
+      <td>1827</td>
+      <td>0.226982</td>
+      <td>1.530100</td>
+      <td>1.302295</td>
+      <td>1.331981</td>
+      <td>1.916467</td>
+      <td>-0.477846</td>
+      <td>-0.451305</td>
+      <td>2.250260</td>
+      <td>...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>8.397958</td>
+      <td>High-Risk</td>
+      <td>3.515780</td>
+      <td>High-Risk</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>False</td>
+      <td>1447</td>
+      <td>-0.147646</td>
+      <td>0.061189</td>
+      <td>0.793618</td>
+      <td>-1.158235</td>
+      <td>0.861264</td>
+      <td>0.625621</td>
+      <td>0.319035</td>
+      <td>0.446026</td>
+      <td>...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.466233</td>
+      <td>Low-Risk</td>
+      <td>0.769723</td>
+      <td>Low-Risk</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>False</td>
+      <td>2574</td>
+      <td>0.296370</td>
+      <td>-1.283677</td>
+      <td>0.169685</td>
+      <td>3.237777</td>
+      <td>-1.008276</td>
+      <td>-0.873566</td>
+      <td>-0.845549</td>
+      <td>-0.351236</td>
+      <td>...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.153047</td>
+      <td>Low-Risk</td>
+      <td>0.320200</td>
+      <td>Low-Risk</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>True</td>
+      <td>3762</td>
+      <td>0.392609</td>
+      <td>-0.096645</td>
+      <td>-0.486337</td>
+      <td>1.903146</td>
+      <td>-0.546292</td>
+      <td>-0.247141</td>
+      <td>-0.720619</td>
+      <td>-0.810790</td>
+      <td>...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>2.224881</td>
+      <td>High-Risk</td>
+      <td>1.167777</td>
+      <td>High-Risk</td>
+    </tr>
+    <tr>
+      <th>50</th>
+      <td>False</td>
+      <td>837</td>
+      <td>-0.813646</td>
+      <td>1.089037</td>
+      <td>0.064451</td>
+      <td>0.212865</td>
+      <td>2.063138</td>
+      <td>-0.224432</td>
+      <td>0.074987</td>
+      <td>2.333282</td>
+      <td>...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>2.886051</td>
+      <td>High-Risk</td>
+      <td>1.832490</td>
+      <td>High-Risk</td>
+    </tr>
+  </tbody>
+</table>
+<p>7 rows × 23 columns</p>
+</div>
+
+
+
+```python
+##################################
+# Gathering the risk-groups
+# for 5 test case samples
+##################################
+print(cirrhosis_survival_test_modeling.loc[[10, 20, 30, 40, 50]][['Predicted_RiskGroups_COXPH_FL1P']])
+```
+
+       Predicted_RiskGroups_COXPH_FL1P
+    10                       High-Risk
+    20                        Low-Risk
+    30                        Low-Risk
+    40                       High-Risk
+    50                       High-Risk
+    
+
+
+```python
+##################################
+# Estimating the cumulative hazard
+# and survival functions
+# for 5 test cases
+##################################
+test_case = cirrhosis_survival_test_modeling.iloc[[10, 20, 30, 40, 50]]
+test_case_labels = ['Patient_10','Patient_20','Patient_30','Patient_40','Patient_50']
+
+fig, axes = plt.subplots(1, 2, figsize=(17, 8))
+for i, (index, row) in enumerate(test_case.iterrows()):
+    survival_function = cirrhosis_survival_coxph_L1_100_L2_0.predict_survival_function(row.to_frame().T)
+    axes[0].plot(survival_function, label=f'Sample {i+1}')
+axes[0].set_title('COXPH_FL1P Survival Function for 5 Test Cases')
+axes[0].set_xlabel('N_Days')
+axes[0].set_ylim(0,1)
+axes[0].set_ylabel('Survival Probability')
+axes[0].legend(test_case_labels, loc="lower left")
+for i, (index, row) in enumerate(test_case.iterrows()):
+    hazard_function = cirrhosis_survival_coxph_L1_100_L2_0.predict_cumulative_hazard(row.to_frame().T)
+    axes[1].plot(hazard_function, label=f'Sample {i+1}')
+axes[1].set_title('COXPH_FL1P Cumulative Hazard for 5 Test Cases')
+axes[1].set_xlabel('N_Days')
+axes[1].set_ylim(0,5)
+axes[1].set_ylabel('Cumulative Hazard')
+axes[1].legend(test_case_labels, loc="upper left")
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_184_0.png)
+    
+
+
+
+```python
+##################################
+# Creating the explainer object
+##################################
+cirrhosis_survival_coxph_L1_100_L2_0_explainer = shap.Explainer(cirrhosis_survival_coxph_L1_100_L2_0.predict_partial_hazard, 
+                                                    cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
+cirrhosis_survival_coxph_L1_100_L2_0_shap_values = cirrhosis_survival_coxph_L1_100_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
+```
+
+    PermutationExplainer explainer: 219it [00:17,  4.68it/s]                         
+    
+
+
+```python
+##################################
+# Plotting the SHAP summary plot
+##################################
+shap.summary_plot(cirrhosis_survival_coxph_L1_100_L2_0_shap_values, 
+                  cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
+```
+
+
+    
+![png](output_186_0.png)
+    
 
 
 ### 1.6.4 Cox Regression With Full L2 Penalty <a class="anchor" id="1.6.4"></a>
