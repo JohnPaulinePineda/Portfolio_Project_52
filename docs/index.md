@@ -7563,7 +7563,8 @@ cirrhosis_survival_test_modeling.head()
 ```python
 ##################################
 # Formulating the Cox Regression model
-# with No Penalty and generating the summary
+# with No Penalty
+# and generating the summary
 ##################################
 cirrhosis_survival_coxph_L1_0_L2_0 = CoxPHFitter()
 cirrhosis_survival_coxph_L1_0_L2_0.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
@@ -8300,7 +8301,7 @@ cirrhosis_survival_coxph_L1_0_L2_0_explainer = shap.Explainer(cirrhosis_survival
 cirrhosis_survival_coxph_L1_0_L2_0_shap_values = cirrhosis_survival_coxph_L1_0_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:27,  6.52it/s]                         
+    PermutationExplainer explainer: 219it [00:22,  6.39it/s]                         
     
 
 
@@ -8325,9 +8326,10 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_0_L2_0_shap_values,
 ```python
 ##################################
 # Formulating the Cox Regression model
-# with Full L1 Penalty and generating the summary
+# with Full L1 Penalty
+# and generating the summary
 ##################################
-cirrhosis_survival_coxph_L1_100_L2_0 = CoxPHFitter(penalizer=0.1, l1_ratio=1.0)
+cirrhosis_survival_coxph_L1_100_L2_0 = CoxPHFitter(penalizer=0.10, l1_ratio=1.00)
 cirrhosis_survival_coxph_L1_100_L2_0.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
 cirrhosis_survival_coxph_L1_100_L2_0.summary
 ```
@@ -8647,7 +8649,6 @@ plt.ylabel('Variables')
 plt.title('COXPH_FL1P Hazard Ratio Forest Plot')
 plt.axvline(x=1, color='k', linestyle='--')
 plt.show()
-
 ```
 
 
@@ -8668,7 +8669,7 @@ colors = ['#993300' if sig else '#CC9966' for sig in significant]
 cirrhosis_survival_coxph_L1_100_L2_0_summary['coef'].plot(kind='barh', color=colors)
 plt.xlabel('Variables')
 plt.ylabel('Model Coefficient Value')
-plt.title('COXPH_Fl1P Model Coefficients')
+plt.title('COXPH_FL1P Model Coefficients')
 plt.xticks(rotation=0, ha='right')
 plt.xlim(-1,1)
 plt.show()
@@ -9063,7 +9064,7 @@ cirrhosis_survival_coxph_L1_100_L2_0_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_100_L2_0_shap_values = cirrhosis_survival_coxph_L1_100_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:17,  4.68it/s]                         
+    PermutationExplainer explainer: 219it [00:23,  5.10it/s]                         
     
 
 
@@ -9084,13 +9085,1448 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_100_L2_0_shap_values,
 ### 1.6.4 Cox Regression With Full L2 Penalty <a class="anchor" id="1.6.4"></a>
 
 
+
+```python
+##################################
+# Formulating the Cox Regression model
+# with Full L2 Penalty and generating the summary
+##################################
+cirrhosis_survival_coxph_L1_0_L2_100 = CoxPHFitter(penalizer=0.10, l1_ratio=0.00)
+cirrhosis_survival_coxph_L1_0_L2_100.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
+cirrhosis_survival_coxph_L1_0_L2_100.summary
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>coef</th>
+      <th>exp(coef)</th>
+      <th>se(coef)</th>
+      <th>coef lower 95%</th>
+      <th>coef upper 95%</th>
+      <th>exp(coef) lower 95%</th>
+      <th>exp(coef) upper 95%</th>
+      <th>cmp to</th>
+      <th>z</th>
+      <th>p</th>
+      <th>-log2(p)</th>
+    </tr>
+    <tr>
+      <th>covariate</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Age</th>
+      <td>0.273503</td>
+      <td>1.314562</td>
+      <td>0.110305</td>
+      <td>0.057310</td>
+      <td>0.489697</td>
+      <td>1.058984</td>
+      <td>1.631822</td>
+      <td>0.0</td>
+      <td>2.479520</td>
+      <td>0.013156</td>
+      <td>6.248144</td>
+    </tr>
+    <tr>
+      <th>Bilirubin</th>
+      <td>0.491176</td>
+      <td>1.634238</td>
+      <td>0.140256</td>
+      <td>0.216279</td>
+      <td>0.766073</td>
+      <td>1.241449</td>
+      <td>2.151303</td>
+      <td>0.0</td>
+      <td>3.501995</td>
+      <td>0.000462</td>
+      <td>11.080482</td>
+    </tr>
+    <tr>
+      <th>Cholesterol</th>
+      <td>0.081915</td>
+      <td>1.085364</td>
+      <td>0.120941</td>
+      <td>-0.155125</td>
+      <td>0.318956</td>
+      <td>0.856308</td>
+      <td>1.375691</td>
+      <td>0.0</td>
+      <td>0.677314</td>
+      <td>0.498207</td>
+      <td>1.005184</td>
+    </tr>
+    <tr>
+      <th>Albumin</th>
+      <td>-0.143698</td>
+      <td>0.866150</td>
+      <td>0.119365</td>
+      <td>-0.377650</td>
+      <td>0.090254</td>
+      <td>0.685471</td>
+      <td>1.094452</td>
+      <td>0.0</td>
+      <td>-1.203847</td>
+      <td>0.228649</td>
+      <td>2.128796</td>
+    </tr>
+    <tr>
+      <th>Copper</th>
+      <td>0.163286</td>
+      <td>1.177373</td>
+      <td>0.121420</td>
+      <td>-0.074692</td>
+      <td>0.401264</td>
+      <td>0.928029</td>
+      <td>1.493712</td>
+      <td>0.0</td>
+      <td>1.344807</td>
+      <td>0.178687</td>
+      <td>2.484490</td>
+    </tr>
+    <tr>
+      <th>Alk_Phos</th>
+      <td>0.039447</td>
+      <td>1.040236</td>
+      <td>0.115607</td>
+      <td>-0.187139</td>
+      <td>0.266034</td>
+      <td>0.829328</td>
+      <td>1.304779</td>
+      <td>0.0</td>
+      <td>0.341217</td>
+      <td>0.732941</td>
+      <td>0.448232</td>
+    </tr>
+    <tr>
+      <th>SGOT</th>
+      <td>0.171530</td>
+      <td>1.187119</td>
+      <td>0.116855</td>
+      <td>-0.057501</td>
+      <td>0.400561</td>
+      <td>0.944121</td>
+      <td>1.492661</td>
+      <td>0.0</td>
+      <td>1.467888</td>
+      <td>0.142135</td>
+      <td>2.814669</td>
+    </tr>
+    <tr>
+      <th>Tryglicerides</th>
+      <td>0.100959</td>
+      <td>1.106231</td>
+      <td>0.109604</td>
+      <td>-0.113861</td>
+      <td>0.315779</td>
+      <td>0.892382</td>
+      <td>1.371327</td>
+      <td>0.0</td>
+      <td>0.921122</td>
+      <td>0.356987</td>
+      <td>1.486058</td>
+    </tr>
+    <tr>
+      <th>Platelets</th>
+      <td>-0.067680</td>
+      <td>0.934559</td>
+      <td>0.105398</td>
+      <td>-0.274257</td>
+      <td>0.138897</td>
+      <td>0.760137</td>
+      <td>1.149006</td>
+      <td>0.0</td>
+      <td>-0.642136</td>
+      <td>0.520785</td>
+      <td>0.941240</td>
+    </tr>
+    <tr>
+      <th>Prothrombin</th>
+      <td>0.290927</td>
+      <td>1.337667</td>
+      <td>0.114357</td>
+      <td>0.066792</td>
+      <td>0.515062</td>
+      <td>1.069073</td>
+      <td>1.673742</td>
+      <td>0.0</td>
+      <td>2.544032</td>
+      <td>0.010958</td>
+      <td>6.511858</td>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <td>-0.165487</td>
+      <td>0.847480</td>
+      <td>0.208410</td>
+      <td>-0.573964</td>
+      <td>0.242989</td>
+      <td>0.563288</td>
+      <td>1.275055</td>
+      <td>0.0</td>
+      <td>-0.794046</td>
+      <td>0.427168</td>
+      <td>1.227123</td>
+    </tr>
+    <tr>
+      <th>Sex</th>
+      <td>0.013801</td>
+      <td>1.013897</td>
+      <td>0.289483</td>
+      <td>-0.553576</td>
+      <td>0.581178</td>
+      <td>0.574890</td>
+      <td>1.788144</td>
+      <td>0.0</td>
+      <td>0.047674</td>
+      <td>0.961976</td>
+      <td>0.055928</td>
+    </tr>
+    <tr>
+      <th>Ascites</th>
+      <td>0.229115</td>
+      <td>1.257486</td>
+      <td>0.349057</td>
+      <td>-0.455025</td>
+      <td>0.913254</td>
+      <td>0.634432</td>
+      <td>2.492420</td>
+      <td>0.0</td>
+      <td>0.656382</td>
+      <td>0.511579</td>
+      <td>0.966972</td>
+    </tr>
+    <tr>
+      <th>Hepatomegaly</th>
+      <td>0.136962</td>
+      <td>1.146785</td>
+      <td>0.227782</td>
+      <td>-0.309482</td>
+      <td>0.583406</td>
+      <td>0.733827</td>
+      <td>1.792132</td>
+      <td>0.0</td>
+      <td>0.601287</td>
+      <td>0.547649</td>
+      <td>0.868676</td>
+    </tr>
+    <tr>
+      <th>Spiders</th>
+      <td>0.032709</td>
+      <td>1.033250</td>
+      <td>0.238344</td>
+      <td>-0.434436</td>
+      <td>0.499855</td>
+      <td>0.647630</td>
+      <td>1.648482</td>
+      <td>0.0</td>
+      <td>0.137235</td>
+      <td>0.890845</td>
+      <td>0.166753</td>
+    </tr>
+    <tr>
+      <th>Edema</th>
+      <td>0.512456</td>
+      <td>1.669387</td>
+      <td>0.268173</td>
+      <td>-0.013154</td>
+      <td>1.038067</td>
+      <td>0.986932</td>
+      <td>2.823753</td>
+      <td>0.0</td>
+      <td>1.910914</td>
+      <td>0.056016</td>
+      <td>4.158026</td>
+    </tr>
+    <tr>
+      <th>Stage_4.0</th>
+      <td>0.238038</td>
+      <td>1.268758</td>
+      <td>0.241160</td>
+      <td>-0.234626</td>
+      <td>0.710703</td>
+      <td>0.790866</td>
+      <td>2.035421</td>
+      <td>0.0</td>
+      <td>0.987056</td>
+      <td>0.323615</td>
+      <td>1.627650</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Plotting the hazard ratio of the
+# formulated Cox Regression model
+# with Full L2 Penalty
+##################################
+cirrhosis_survival_coxph_L1_0_L2_100_summary = cirrhosis_survival_coxph_L1_0_L2_100.summary
+cirrhosis_survival_coxph_L1_0_L2_100_summary['hazard_ratio'] = np.exp(cirrhosis_survival_coxph_L1_0_L2_100_summary['coef'])
+significant = cirrhosis_survival_coxph_L1_0_L2_100_summary['p'] < 0.05
+plt.figure(figsize=(17, 8))
+colors = ['#993300' if sig else '#CC9966' for sig in significant]
+
+plt.barh(cirrhosis_survival_coxph_L1_0_L2_100_summary.index, 
+         cirrhosis_survival_coxph_L1_0_L2_100_summary['hazard_ratio'], 
+         xerr=cirrhosis_survival_coxph_L1_0_L2_100_summary['se(coef)'], 
+         color=colors)
+plt.xlabel('Hazard Ratio')
+plt.ylabel('Variables')
+plt.title('COXPH_FL2P Hazard Ratio Forest Plot')
+plt.axvline(x=1, color='k', linestyle='--')
+plt.show()
+```
+
+
+    
+![png](output_189_0.png)
+    
+
+
+
+```python
+##################################
+# Plotting the coefficient magnitude
+# of the formulated Cox Regression model
+# with Full L2 Penalty
+##################################
+plt.figure(figsize=(17, 8))
+colors = ['#993300' if sig else '#CC9966' for sig in significant]
+cirrhosis_survival_coxph_L1_0_L2_100_summary['coef'].plot(kind='barh', color=colors)
+plt.xlabel('Variables')
+plt.ylabel('Model Coefficient Value')
+plt.title('COXPH_FL2P Model Coefficients')
+plt.xticks(rotation=0, ha='right')
+plt.xlim(-1,1)
+plt.show()
+```
+
+
+    
+![png](output_190_0.png)
+    
+
+
 ### 1.6.5 Cox Regression With Equal L1|L2 Penalty <a class="anchor" id="1.6.5"></a>
+
+
+
+```python
+##################################
+# Formulating the Cox Regression model
+# with Equal L1 and l2 Penalty
+# and generating the summary
+##################################
+cirrhosis_survival_coxph_L1_50_L2_50 = CoxPHFitter(penalizer=0.10, l1_ratio=0.50)
+cirrhosis_survival_coxph_L1_50_L2_50.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
+cirrhosis_survival_coxph_L1_50_L2_50.summary
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>coef</th>
+      <th>exp(coef)</th>
+      <th>se(coef)</th>
+      <th>coef lower 95%</th>
+      <th>coef upper 95%</th>
+      <th>exp(coef) lower 95%</th>
+      <th>exp(coef) upper 95%</th>
+      <th>cmp to</th>
+      <th>z</th>
+      <th>p</th>
+      <th>-log2(p)</th>
+    </tr>
+    <tr>
+      <th>covariate</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Age</th>
+      <td>1.735119e-01</td>
+      <td>1.189475</td>
+      <td>0.105893</td>
+      <td>-0.034035</td>
+      <td>0.381059</td>
+      <td>0.966538</td>
+      <td>1.463834</td>
+      <td>0.0</td>
+      <td>1.638554</td>
+      <td>0.101306</td>
+      <td>3.303207</td>
+    </tr>
+    <tr>
+      <th>Bilirubin</th>
+      <td>6.232373e-01</td>
+      <td>1.864956</td>
+      <td>0.153110</td>
+      <td>0.323146</td>
+      <td>0.923328</td>
+      <td>1.381468</td>
+      <td>2.517655</td>
+      <td>0.0</td>
+      <td>4.070510</td>
+      <td>0.000047</td>
+      <td>14.379736</td>
+    </tr>
+    <tr>
+      <th>Cholesterol</th>
+      <td>1.027031e-07</td>
+      <td>1.000000</td>
+      <td>0.000158</td>
+      <td>-0.000310</td>
+      <td>0.000311</td>
+      <td>0.999690</td>
+      <td>1.000311</td>
+      <td>0.0</td>
+      <td>0.000648</td>
+      <td>0.999483</td>
+      <td>0.000746</td>
+    </tr>
+    <tr>
+      <th>Albumin</th>
+      <td>-1.062850e-01</td>
+      <td>0.899168</td>
+      <td>0.124211</td>
+      <td>-0.349734</td>
+      <td>0.137164</td>
+      <td>0.704875</td>
+      <td>1.147017</td>
+      <td>0.0</td>
+      <td>-0.855681</td>
+      <td>0.392175</td>
+      <td>1.350432</td>
+    </tr>
+    <tr>
+      <th>Copper</th>
+      <td>1.247938e-01</td>
+      <td>1.132915</td>
+      <td>0.121539</td>
+      <td>-0.113419</td>
+      <td>0.363006</td>
+      <td>0.892777</td>
+      <td>1.437645</td>
+      <td>0.0</td>
+      <td>1.026777</td>
+      <td>0.304525</td>
+      <td>1.715365</td>
+    </tr>
+    <tr>
+      <th>Alk_Phos</th>
+      <td>1.833222e-07</td>
+      <td>1.000000</td>
+      <td>0.000194</td>
+      <td>-0.000380</td>
+      <td>0.000380</td>
+      <td>0.999620</td>
+      <td>1.000380</td>
+      <td>0.0</td>
+      <td>0.000945</td>
+      <td>0.999246</td>
+      <td>0.001089</td>
+    </tr>
+    <tr>
+      <th>SGOT</th>
+      <td>5.418539e-02</td>
+      <td>1.055680</td>
+      <td>0.123088</td>
+      <td>-0.187063</td>
+      <td>0.295434</td>
+      <td>0.829391</td>
+      <td>1.343710</td>
+      <td>0.0</td>
+      <td>0.440215</td>
+      <td>0.659781</td>
+      <td>0.599941</td>
+    </tr>
+    <tr>
+      <th>Tryglicerides</th>
+      <td>4.676406e-02</td>
+      <td>1.047875</td>
+      <td>0.108783</td>
+      <td>-0.166447</td>
+      <td>0.259975</td>
+      <td>0.846668</td>
+      <td>1.296898</td>
+      <td>0.0</td>
+      <td>0.429883</td>
+      <td>0.667280</td>
+      <td>0.583635</td>
+    </tr>
+    <tr>
+      <th>Platelets</th>
+      <td>-6.958829e-07</td>
+      <td>0.999999</td>
+      <td>0.001610</td>
+      <td>-0.003157</td>
+      <td>0.003155</td>
+      <td>0.996848</td>
+      <td>1.003160</td>
+      <td>0.0</td>
+      <td>-0.000432</td>
+      <td>0.999655</td>
+      <td>0.000498</td>
+    </tr>
+    <tr>
+      <th>Prothrombin</th>
+      <td>2.508953e-01</td>
+      <td>1.285176</td>
+      <td>0.121104</td>
+      <td>0.013535</td>
+      <td>0.488255</td>
+      <td>1.013627</td>
+      <td>1.629471</td>
+      <td>0.0</td>
+      <td>2.071730</td>
+      <td>0.038291</td>
+      <td>4.706865</td>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <td>-1.917876e-07</td>
+      <td>1.000000</td>
+      <td>0.000314</td>
+      <td>-0.000615</td>
+      <td>0.000614</td>
+      <td>0.999385</td>
+      <td>1.000615</td>
+      <td>0.0</td>
+      <td>-0.000612</td>
+      <td>0.999512</td>
+      <td>0.000704</td>
+    </tr>
+    <tr>
+      <th>Sex</th>
+      <td>-3.698238e-07</td>
+      <td>1.000000</td>
+      <td>0.000495</td>
+      <td>-0.000970</td>
+      <td>0.000969</td>
+      <td>0.999030</td>
+      <td>1.000970</td>
+      <td>0.0</td>
+      <td>-0.000748</td>
+      <td>0.999404</td>
+      <td>0.000861</td>
+    </tr>
+    <tr>
+      <th>Ascites</th>
+      <td>1.846251e-01</td>
+      <td>1.202767</td>
+      <td>0.367758</td>
+      <td>-0.536167</td>
+      <td>0.905418</td>
+      <td>0.584986</td>
+      <td>2.472964</td>
+      <td>0.0</td>
+      <td>0.502029</td>
+      <td>0.615647</td>
+      <td>0.699824</td>
+    </tr>
+    <tr>
+      <th>Hepatomegaly</th>
+      <td>5.622110e-04</td>
+      <td>1.000562</td>
+      <td>0.238476</td>
+      <td>-0.466841</td>
+      <td>0.467966</td>
+      <td>0.626980</td>
+      <td>1.596743</td>
+      <td>0.0</td>
+      <td>0.002358</td>
+      <td>0.998119</td>
+      <td>0.002716</td>
+    </tr>
+    <tr>
+      <th>Spiders</th>
+      <td>3.890060e-07</td>
+      <td>1.000000</td>
+      <td>0.000424</td>
+      <td>-0.000831</td>
+      <td>0.000832</td>
+      <td>0.999169</td>
+      <td>1.000832</td>
+      <td>0.0</td>
+      <td>0.000917</td>
+      <td>0.999268</td>
+      <td>0.001056</td>
+    </tr>
+    <tr>
+      <th>Edema</th>
+      <td>3.639376e-01</td>
+      <td>1.438984</td>
+      <td>0.278544</td>
+      <td>-0.182000</td>
+      <td>0.909875</td>
+      <td>0.833602</td>
+      <td>2.484011</td>
+      <td>0.0</td>
+      <td>1.306569</td>
+      <td>0.191359</td>
+      <td>2.385645</td>
+    </tr>
+    <tr>
+      <th>Stage_4.0</th>
+      <td>1.520894e-01</td>
+      <td>1.164264</td>
+      <td>0.258242</td>
+      <td>-0.354055</td>
+      <td>0.658234</td>
+      <td>0.701836</td>
+      <td>1.931379</td>
+      <td>0.0</td>
+      <td>0.588942</td>
+      <td>0.555900</td>
+      <td>0.847102</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Plotting the hazard ratio of the
+# formulated Cox Regression model
+# with Equal L1 and l2 Penalty
+##################################
+cirrhosis_survival_coxph_L1_50_L2_50_summary = cirrhosis_survival_coxph_L1_50_L2_50.summary
+cirrhosis_survival_coxph_L1_50_L2_50_summary['hazard_ratio'] = np.exp(cirrhosis_survival_coxph_L1_50_L2_50_summary['coef'])
+significant = cirrhosis_survival_coxph_L1_50_L2_50_summary['p'] < 0.05
+plt.figure(figsize=(17, 8))
+colors = ['#993300' if sig else '#CC9966' for sig in significant]
+
+plt.barh(cirrhosis_survival_coxph_L1_50_L2_50_summary.index, 
+         cirrhosis_survival_coxph_L1_50_L2_50_summary['hazard_ratio'], 
+         xerr=cirrhosis_survival_coxph_L1_50_L2_50_summary['se(coef)'], 
+         color=colors)
+plt.xlabel('Hazard Ratio')
+plt.ylabel('Variables')
+plt.title('COXPH_EL1L2P Hazard Ratio Forest Plot')
+plt.axvline(x=1, color='k', linestyle='--')
+plt.show()
+```
+
+
+    
+![png](output_193_0.png)
+    
+
+
+
+```python
+##################################
+# Plotting the coefficient magnitude
+# of the formulated Cox Regression model
+# with Equal L1 and l2 Penalty
+##################################
+plt.figure(figsize=(17, 8))
+colors = ['#993300' if sig else '#CC9966' for sig in significant]
+cirrhosis_survival_coxph_L1_50_L2_50_summary['coef'].plot(kind='barh', color=colors)
+plt.xlabel('Variables')
+plt.ylabel('Model Coefficient Value')
+plt.title('COXPH_EL1L2P Model Coefficients')
+plt.xticks(rotation=0, ha='right')
+plt.xlim(-1,1)
+plt.show()
+```
+
+
+    
+![png](output_194_0.png)
+    
 
 
 ### 1.6.6 Cox Regression With Predominantly L1-Weighted|L2 Penalty <a class="anchor" id="1.6.6"></a>
 
 
+
+```python
+##################################
+# Formulating the Cox Regression model
+# with Predominantly L1-Weighted and L2 Penalty
+# and generating the summary
+##################################
+cirrhosis_survival_coxph_L1_75_L2_25 = CoxPHFitter(penalizer=0.10, l1_ratio=0.75)
+cirrhosis_survival_coxph_L1_75_L2_25.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
+cirrhosis_survival_coxph_L1_75_L2_25.summary
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>coef</th>
+      <th>exp(coef)</th>
+      <th>se(coef)</th>
+      <th>coef lower 95%</th>
+      <th>coef upper 95%</th>
+      <th>exp(coef) lower 95%</th>
+      <th>exp(coef) upper 95%</th>
+      <th>cmp to</th>
+      <th>z</th>
+      <th>p</th>
+      <th>-log2(p)</th>
+    </tr>
+    <tr>
+      <th>covariate</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Age</th>
+      <td>1.349698e-01</td>
+      <td>1.144502</td>
+      <td>0.108439</td>
+      <td>-0.077568</td>
+      <td>0.347507</td>
+      <td>0.925364</td>
+      <td>1.415535</td>
+      <td>0.0</td>
+      <td>1.244656</td>
+      <td>0.213258</td>
+      <td>2.229327</td>
+    </tr>
+    <tr>
+      <th>Bilirubin</th>
+      <td>6.831940e-01</td>
+      <td>1.980192</td>
+      <td>0.147122</td>
+      <td>0.394841</td>
+      <td>0.971547</td>
+      <td>1.484148</td>
+      <td>2.642029</td>
+      <td>0.0</td>
+      <td>4.643737</td>
+      <td>0.000003</td>
+      <td>18.156883</td>
+    </tr>
+    <tr>
+      <th>Cholesterol</th>
+      <td>2.576816e-08</td>
+      <td>1.000000</td>
+      <td>0.000081</td>
+      <td>-0.000159</td>
+      <td>0.000159</td>
+      <td>0.999841</td>
+      <td>1.000159</td>
+      <td>0.0</td>
+      <td>0.000317</td>
+      <td>0.999747</td>
+      <td>0.000365</td>
+    </tr>
+    <tr>
+      <th>Albumin</th>
+      <td>-8.508496e-02</td>
+      <td>0.918434</td>
+      <td>0.128576</td>
+      <td>-0.337088</td>
+      <td>0.166918</td>
+      <td>0.713846</td>
+      <td>1.181658</td>
+      <td>0.0</td>
+      <td>-0.661751</td>
+      <td>0.508131</td>
+      <td>0.976728</td>
+    </tr>
+    <tr>
+      <th>Copper</th>
+      <td>8.805786e-02</td>
+      <td>1.092051</td>
+      <td>0.126767</td>
+      <td>-0.160401</td>
+      <td>0.336516</td>
+      <td>0.851802</td>
+      <td>1.400062</td>
+      <td>0.0</td>
+      <td>0.694644</td>
+      <td>0.487278</td>
+      <td>1.037182</td>
+    </tr>
+    <tr>
+      <th>Alk_Phos</th>
+      <td>6.930976e-08</td>
+      <td>1.000000</td>
+      <td>0.000098</td>
+      <td>-0.000192</td>
+      <td>0.000192</td>
+      <td>0.999808</td>
+      <td>1.000192</td>
+      <td>0.0</td>
+      <td>0.000709</td>
+      <td>0.999435</td>
+      <td>0.000816</td>
+    </tr>
+    <tr>
+      <th>SGOT</th>
+      <td>1.623334e-07</td>
+      <td>1.000000</td>
+      <td>0.000202</td>
+      <td>-0.000396</td>
+      <td>0.000396</td>
+      <td>0.999604</td>
+      <td>1.000397</td>
+      <td>0.0</td>
+      <td>0.000803</td>
+      <td>0.999359</td>
+      <td>0.000925</td>
+    </tr>
+    <tr>
+      <th>Tryglicerides</th>
+      <td>1.163402e-04</td>
+      <td>1.000116</td>
+      <td>0.112144</td>
+      <td>-0.219682</td>
+      <td>0.219914</td>
+      <td>0.802774</td>
+      <td>1.245970</td>
+      <td>0.0</td>
+      <td>0.001037</td>
+      <td>0.999172</td>
+      <td>0.001195</td>
+    </tr>
+    <tr>
+      <th>Platelets</th>
+      <td>-1.524115e-07</td>
+      <td>1.000000</td>
+      <td>0.000185</td>
+      <td>-0.000363</td>
+      <td>0.000362</td>
+      <td>0.999637</td>
+      <td>1.000362</td>
+      <td>0.0</td>
+      <td>-0.000824</td>
+      <td>0.999343</td>
+      <td>0.000949</td>
+    </tr>
+    <tr>
+      <th>Prothrombin</th>
+      <td>2.251074e-01</td>
+      <td>1.252457</td>
+      <td>0.126126</td>
+      <td>-0.022095</td>
+      <td>0.472310</td>
+      <td>0.978147</td>
+      <td>1.603694</td>
+      <td>0.0</td>
+      <td>1.784781</td>
+      <td>0.074297</td>
+      <td>3.750555</td>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <td>-3.710982e-08</td>
+      <td>1.000000</td>
+      <td>0.000161</td>
+      <td>-0.000315</td>
+      <td>0.000315</td>
+      <td>0.999685</td>
+      <td>1.000315</td>
+      <td>0.0</td>
+      <td>-0.000231</td>
+      <td>0.999816</td>
+      <td>0.000266</td>
+    </tr>
+    <tr>
+      <th>Sex</th>
+      <td>-1.881487e-07</td>
+      <td>1.000000</td>
+      <td>0.000282</td>
+      <td>-0.000553</td>
+      <td>0.000553</td>
+      <td>0.999447</td>
+      <td>1.000553</td>
+      <td>0.0</td>
+      <td>-0.000667</td>
+      <td>0.999468</td>
+      <td>0.000768</td>
+    </tr>
+    <tr>
+      <th>Ascites</th>
+      <td>1.933495e-01</td>
+      <td>1.213307</td>
+      <td>0.388559</td>
+      <td>-0.568213</td>
+      <td>0.954912</td>
+      <td>0.566537</td>
+      <td>2.598442</td>
+      <td>0.0</td>
+      <td>0.497606</td>
+      <td>0.618762</td>
+      <td>0.692544</td>
+    </tr>
+    <tr>
+      <th>Hepatomegaly</th>
+      <td>3.022681e-07</td>
+      <td>1.000000</td>
+      <td>0.000366</td>
+      <td>-0.000716</td>
+      <td>0.000717</td>
+      <td>0.999284</td>
+      <td>1.000717</td>
+      <td>0.0</td>
+      <td>0.000827</td>
+      <td>0.999340</td>
+      <td>0.000952</td>
+    </tr>
+    <tr>
+      <th>Spiders</th>
+      <td>1.424028e-07</td>
+      <td>1.000000</td>
+      <td>0.000214</td>
+      <td>-0.000418</td>
+      <td>0.000419</td>
+      <td>0.999582</td>
+      <td>1.000419</td>
+      <td>0.0</td>
+      <td>0.000667</td>
+      <td>0.999468</td>
+      <td>0.000768</td>
+    </tr>
+    <tr>
+      <th>Edema</th>
+      <td>2.686481e-01</td>
+      <td>1.308195</td>
+      <td>0.293772</td>
+      <td>-0.307134</td>
+      <td>0.844430</td>
+      <td>0.735552</td>
+      <td>2.326651</td>
+      <td>0.0</td>
+      <td>0.914479</td>
+      <td>0.360465</td>
+      <td>1.472069</td>
+    </tr>
+    <tr>
+      <th>Stage_4.0</th>
+      <td>8.598185e-02</td>
+      <td>1.089787</td>
+      <td>0.255667</td>
+      <td>-0.415116</td>
+      <td>0.587080</td>
+      <td>0.660264</td>
+      <td>1.798728</td>
+      <td>0.0</td>
+      <td>0.336304</td>
+      <td>0.736642</td>
+      <td>0.440965</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Plotting the hazard ratio of the
+# formulated Cox Regression model
+# with Predominantly L1-Weighted and L2 Penalty
+##################################
+cirrhosis_survival_coxph_L1_75_L2_25_summary = cirrhosis_survival_coxph_L1_75_L2_25.summary
+cirrhosis_survival_coxph_L1_75_L2_25_summary['hazard_ratio'] = np.exp(cirrhosis_survival_coxph_L1_75_L2_25_summary['coef'])
+significant = cirrhosis_survival_coxph_L1_75_L2_25_summary['p'] < 0.05
+plt.figure(figsize=(17, 8))
+colors = ['#993300' if sig else '#CC9966' for sig in significant]
+
+plt.barh(cirrhosis_survival_coxph_L1_75_L2_25_summary.index, 
+         cirrhosis_survival_coxph_L1_75_L2_25_summary['hazard_ratio'], 
+         xerr=cirrhosis_survival_coxph_L1_75_L2_25_summary['se(coef)'], 
+         color=colors)
+plt.xlabel('Hazard Ratio')
+plt.ylabel('Variables')
+plt.title('COXPH_PWL1L2P Hazard Ratio Forest Plot')
+plt.axvline(x=1, color='k', linestyle='--')
+plt.show()
+```
+
+
+    
+![png](output_197_0.png)
+    
+
+
+
+```python
+##################################
+# Plotting the coefficient magnitude
+# of the formulated Cox Regression model
+# with Predominantly L1-Weighted and L2 Penalty
+##################################
+plt.figure(figsize=(17, 8))
+colors = ['#993300' if sig else '#CC9966' for sig in significant]
+cirrhosis_survival_coxph_L1_75_L2_25_summary['coef'].plot(kind='barh', color=colors)
+plt.xlabel('Variables')
+plt.ylabel('Model Coefficient Value')
+plt.title('COXPH_PWL1L2P Model Coefficients')
+plt.xticks(rotation=0, ha='right')
+plt.xlim(-1,1)
+plt.show()
+```
+
+
+    
+![png](output_198_0.png)
+    
+
+
 ### 1.6.7 Cox Regression With Predominantly L2-Weighted|L1 Penalty <a class="anchor" id="1.6.7"></a>
+
+
+
+```python
+##################################
+# Formulating the Cox Regression model
+# with Predominantly L2-Weighted and L1 Penalty
+# and generating the summary
+##################################
+cirrhosis_survival_coxph_L1_25_L2_75 = CoxPHFitter(penalizer=0.10, l1_ratio=0.25)
+cirrhosis_survival_coxph_L1_25_L2_75.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
+cirrhosis_survival_coxph_L1_25_L2_75.summary
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>coef</th>
+      <th>exp(coef)</th>
+      <th>se(coef)</th>
+      <th>coef lower 95%</th>
+      <th>coef upper 95%</th>
+      <th>exp(coef) lower 95%</th>
+      <th>exp(coef) upper 95%</th>
+      <th>cmp to</th>
+      <th>z</th>
+      <th>p</th>
+      <th>-log2(p)</th>
+    </tr>
+    <tr>
+      <th>covariate</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Age</th>
+      <td>2.098302e-01</td>
+      <td>1.233469</td>
+      <td>0.105619</td>
+      <td>0.002821</td>
+      <td>0.416839</td>
+      <td>1.002825</td>
+      <td>1.517158</td>
+      <td>0.0</td>
+      <td>1.986676</td>
+      <td>0.046958</td>
+      <td>4.412476</td>
+    </tr>
+    <tr>
+      <th>Bilirubin</th>
+      <td>5.633892e-01</td>
+      <td>1.756616</td>
+      <td>0.142932</td>
+      <td>0.283247</td>
+      <td>0.843532</td>
+      <td>1.327433</td>
+      <td>2.324562</td>
+      <td>0.0</td>
+      <td>3.941649</td>
+      <td>0.000081</td>
+      <td>13.593084</td>
+    </tr>
+    <tr>
+      <th>Cholesterol</th>
+      <td>5.292292e-07</td>
+      <td>1.000001</td>
+      <td>0.000566</td>
+      <td>-0.001109</td>
+      <td>0.001110</td>
+      <td>0.998892</td>
+      <td>1.001110</td>
+      <td>0.0</td>
+      <td>0.000935</td>
+      <td>0.999254</td>
+      <td>0.001077</td>
+    </tr>
+    <tr>
+      <th>Albumin</th>
+      <td>-1.292244e-01</td>
+      <td>0.878777</td>
+      <td>0.121025</td>
+      <td>-0.366429</td>
+      <td>0.107980</td>
+      <td>0.693205</td>
+      <td>1.114026</td>
+      <td>0.0</td>
+      <td>-1.067749</td>
+      <td>0.285634</td>
+      <td>1.807762</td>
+    </tr>
+    <tr>
+      <th>Copper</th>
+      <td>1.485291e-01</td>
+      <td>1.160127</td>
+      <td>0.116375</td>
+      <td>-0.079562</td>
+      <td>0.376621</td>
+      <td>0.923520</td>
+      <td>1.457351</td>
+      <td>0.0</td>
+      <td>1.276293</td>
+      <td>0.201852</td>
+      <td>2.308632</td>
+    </tr>
+    <tr>
+      <th>Alk_Phos</th>
+      <td>6.288623e-07</td>
+      <td>1.000001</td>
+      <td>0.000719</td>
+      <td>-0.001409</td>
+      <td>0.001411</td>
+      <td>0.998592</td>
+      <td>1.001412</td>
+      <td>0.0</td>
+      <td>0.000874</td>
+      <td>0.999303</td>
+      <td>0.001007</td>
+    </tr>
+    <tr>
+      <th>SGOT</th>
+      <td>1.228628e-01</td>
+      <td>1.130729</td>
+      <td>0.119216</td>
+      <td>-0.110796</td>
+      <td>0.356522</td>
+      <td>0.895121</td>
+      <td>1.428352</td>
+      <td>0.0</td>
+      <td>1.030591</td>
+      <td>0.302733</td>
+      <td>1.723884</td>
+    </tr>
+    <tr>
+      <th>Tryglicerides</th>
+      <td>8.503213e-02</td>
+      <td>1.088752</td>
+      <td>0.105471</td>
+      <td>-0.121687</td>
+      <td>0.291752</td>
+      <td>0.885425</td>
+      <td>1.338771</td>
+      <td>0.0</td>
+      <td>0.806212</td>
+      <td>0.420120</td>
+      <td>1.251125</td>
+    </tr>
+    <tr>
+      <th>Platelets</th>
+      <td>-2.019627e-02</td>
+      <td>0.980006</td>
+      <td>0.101236</td>
+      <td>-0.218615</td>
+      <td>0.178222</td>
+      <td>0.803631</td>
+      <td>1.195091</td>
+      <td>0.0</td>
+      <td>-0.199497</td>
+      <td>0.841874</td>
+      <td>0.248324</td>
+    </tr>
+    <tr>
+      <th>Prothrombin</th>
+      <td>2.734613e-01</td>
+      <td>1.314506</td>
+      <td>0.117072</td>
+      <td>0.044005</td>
+      <td>0.502918</td>
+      <td>1.044987</td>
+      <td>1.653539</td>
+      <td>0.0</td>
+      <td>2.335843</td>
+      <td>0.019499</td>
+      <td>5.680423</td>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <td>-1.579953e-06</td>
+      <td>0.999998</td>
+      <td>0.002154</td>
+      <td>-0.004223</td>
+      <td>0.004220</td>
+      <td>0.995786</td>
+      <td>1.004229</td>
+      <td>0.0</td>
+      <td>-0.000734</td>
+      <td>0.999415</td>
+      <td>0.000845</td>
+    </tr>
+    <tr>
+      <th>Sex</th>
+      <td>-3.844239e-07</td>
+      <td>1.000000</td>
+      <td>0.000832</td>
+      <td>-0.001631</td>
+      <td>0.001630</td>
+      <td>0.998370</td>
+      <td>1.001632</td>
+      <td>0.0</td>
+      <td>-0.000462</td>
+      <td>0.999631</td>
+      <td>0.000532</td>
+    </tr>
+    <tr>
+      <th>Ascites</th>
+      <td>1.722505e-01</td>
+      <td>1.187975</td>
+      <td>0.353328</td>
+      <td>-0.520260</td>
+      <td>0.864761</td>
+      <td>0.594366</td>
+      <td>2.374439</td>
+      <td>0.0</td>
+      <td>0.487509</td>
+      <td>0.625898</td>
+      <td>0.676001</td>
+    </tr>
+    <tr>
+      <th>Hepatomegaly</th>
+      <td>7.177581e-02</td>
+      <td>1.074414</td>
+      <td>0.232008</td>
+      <td>-0.382951</td>
+      <td>0.526503</td>
+      <td>0.681846</td>
+      <td>1.693001</td>
+      <td>0.0</td>
+      <td>0.309368</td>
+      <td>0.757042</td>
+      <td>0.401555</td>
+    </tr>
+    <tr>
+      <th>Spiders</th>
+      <td>9.054306e-07</td>
+      <td>1.000001</td>
+      <td>0.000961</td>
+      <td>-0.001883</td>
+      <td>0.001885</td>
+      <td>0.998119</td>
+      <td>1.001887</td>
+      <td>0.0</td>
+      <td>0.000942</td>
+      <td>0.999248</td>
+      <td>0.001085</td>
+    </tr>
+    <tr>
+      <th>Edema</th>
+      <td>4.290145e-01</td>
+      <td>1.535743</td>
+      <td>0.269937</td>
+      <td>-0.100052</td>
+      <td>0.958081</td>
+      <td>0.904791</td>
+      <td>2.606688</td>
+      <td>0.0</td>
+      <td>1.589316</td>
+      <td>0.111989</td>
+      <td>3.158569</td>
+    </tr>
+    <tr>
+      <th>Stage_4.0</th>
+      <td>1.920942e-01</td>
+      <td>1.211785</td>
+      <td>0.246854</td>
+      <td>-0.291731</td>
+      <td>0.675920</td>
+      <td>0.746969</td>
+      <td>1.965840</td>
+      <td>0.0</td>
+      <td>0.778169</td>
+      <td>0.436470</td>
+      <td>1.196047</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Plotting the hazard ratio of the
+# formulated Cox Regression model
+# with Predominantly L2-Weighted and L1 Penalty
+##################################
+cirrhosis_survival_coxph_L1_25_L2_75_summary = cirrhosis_survival_coxph_L1_25_L2_75.summary
+cirrhosis_survival_coxph_L1_25_L2_75_summary['hazard_ratio'] = np.exp(cirrhosis_survival_coxph_L1_25_L2_75_summary['coef'])
+significant = cirrhosis_survival_coxph_L1_25_L2_75_summary['p'] < 0.05
+plt.figure(figsize=(17, 8))
+colors = ['#993300' if sig else '#CC9966' for sig in significant]
+
+plt.barh(cirrhosis_survival_coxph_L1_25_L2_75_summary.index, 
+         cirrhosis_survival_coxph_L1_25_L2_75_summary['hazard_ratio'], 
+         xerr=cirrhosis_survival_coxph_L1_25_L2_75_summary['se(coef)'], 
+         color=colors)
+plt.xlabel('Hazard Ratio')
+plt.ylabel('Variables')
+plt.title('COXPH_PWL2L1P Hazard Ratio Forest Plot')
+plt.axvline(x=1, color='k', linestyle='--')
+plt.show()
+```
+
+
+    
+![png](output_201_0.png)
+    
+
+
+
+```python
+##################################
+# Plotting the coefficient magnitude
+# of the formulated Cox Regression model
+# with Predominantly L2-Weighted and L1 Penalty
+##################################
+plt.figure(figsize=(17, 8))
+colors = ['#993300' if sig else '#CC9966' for sig in significant]
+cirrhosis_survival_coxph_L1_25_L2_75_summary['coef'].plot(kind='barh', color=colors)
+plt.xlabel('Variables')
+plt.ylabel('Model Coefficient Value')
+plt.title('COXPH_PWL2L1P Model Coefficients')
+plt.xticks(rotation=0, ha='right')
+plt.xlim(-1,1)
+plt.show()
+```
+
+
+    
+![png](output_202_0.png)
+    
 
 
 ## 1.7. Consolidated Findings <a class="anchor" id="1.7"></a>
