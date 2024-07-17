@@ -8323,7 +8323,7 @@ cirrhosis_survival_coxph_L1_0_L2_0_explainer = shap.Explainer(cirrhosis_survival
 cirrhosis_survival_coxph_L1_0_L2_0_shap_values = cirrhosis_survival_coxph_L1_0_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:26,  6.38it/s]                         
+    PermutationExplainer explainer: 219it [00:26,  6.05it/s]                         
     
 
 
@@ -9109,7 +9109,7 @@ cirrhosis_survival_coxph_L1_100_L2_0_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_100_L2_0_shap_values = cirrhosis_survival_coxph_L1_100_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:23,  5.37it/s]                         
+    PermutationExplainer explainer: 219it [00:18,  5.56it/s]                         
     
 
 
@@ -9894,7 +9894,7 @@ cirrhosis_survival_coxph_L1_0_L2_100_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_0_L2_100_shap_values = cirrhosis_survival_coxph_L1_0_L2_100_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:20,  4.60it/s]                         
+    PermutationExplainer explainer: 219it [00:16,  4.89it/s]                         
     
 
 
@@ -10680,7 +10680,7 @@ cirrhosis_survival_coxph_L1_50_L2_50_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_50_L2_50_shap_values = cirrhosis_survival_coxph_L1_50_L2_50_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:21,  5.69it/s]                         
+    PermutationExplainer explainer: 219it [00:18,  4.18it/s]                         
     
 
 
@@ -11466,7 +11466,7 @@ cirrhosis_survival_coxph_L1_75_L2_25_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_75_L2_25_shap_values = cirrhosis_survival_coxph_L1_75_L2_25_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:16,  4.92it/s]                         
+    PermutationExplainer explainer: 219it [00:23,  5.37it/s]                         
     
 
 
@@ -12252,7 +12252,7 @@ cirrhosis_survival_coxph_L1_25_L2_75_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_25_L2_75_shap_values = cirrhosis_survival_coxph_L1_25_L2_75_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:19,  3.92it/s]                         
+    PermutationExplainer explainer: 219it [00:22,  5.26it/s]                         
     
 
 
@@ -12273,6 +12273,298 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_25_L2_75_shap_values,
 
 ## 1.7. Consolidated Findings <a class="anchor" id="1.7"></a>
 
+
+
+
+```python
+##################################
+# Consolidating all the
+# model performance metrics
+##################################
+model_performance_comparison = pd.concat([coxph_L1_0_L2_0_summary, 
+                                          coxph_L1_100_L2_0_summary,
+                                          coxph_L1_0_L2_100_summary, 
+                                          coxph_L1_50_L2_50_summary,
+                                          coxph_L1_75_L2_25_summary,
+                                          coxph_L1_25_L2_75_summary], 
+                                         axis=0,
+                                         ignore_index=True)
+print('Cox Regression Model Comparison: ')
+display(model_performance_comparison)
+```
+
+    Cox Regression Model Comparison: 
+    
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.847854</td>
+      <td>COXPH_NP</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.802364</td>
+      <td>COXPH_NP</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Test</td>
+      <td>0.848073</td>
+      <td>COXPH_NP</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Train</td>
+      <td>0.831356</td>
+      <td>COXPH_FL1P</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Cross-Validation</td>
+      <td>0.811197</td>
+      <td>COXPH_FL1P</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Test</td>
+      <td>0.842630</td>
+      <td>COXPH_FL1P</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Train</td>
+      <td>0.853381</td>
+      <td>COXPH_FL2P</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Cross-Validation</td>
+      <td>0.809983</td>
+      <td>COXPH_FL2P</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Test</td>
+      <td>0.867574</td>
+      <td>COXPH_FL2P</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Train</td>
+      <td>0.846554</td>
+      <td>COXPH_EL1L2P</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Cross-Validation</td>
+      <td>0.816280</td>
+      <td>COXPH_EL1L2P</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Test</td>
+      <td>0.863039</td>
+      <td>COXPH_EL1L2P</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Train</td>
+      <td>0.839402</td>
+      <td>COXPH_PWL1L2P</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>Cross-Validation</td>
+      <td>0.810178</td>
+      <td>COXPH_PWL1L2P</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>Test</td>
+      <td>0.852608</td>
+      <td>COXPH_PWL1L2P</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>Train</td>
+      <td>0.850130</td>
+      <td>COXPH_PWL2L1P</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>Cross-Validation</td>
+      <td>0.815259</td>
+      <td>COXPH_PWL2L1P</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>Test</td>
+      <td>0.867120</td>
+      <td>COXPH_PWL2L1P</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Consolidating the concordance indices
+# for all sets and models
+##################################
+set_labels = ['Train','Cross-Validation','Test']
+coxph_np_ci = model_performance_comparison[((model_performance_comparison['Set'] == 'Train') |
+                                            (model_performance_comparison['Set'] == 'Cross-Validation') |
+                                            (model_performance_comparison['Set'] == 'Test')) & 
+                                           (model_performance_comparison['Method']=='COXPH_NP')]['Concordance.Index'].values
+coxph_fl1p_ci = model_performance_comparison[((model_performance_comparison['Set'] == 'Train') |
+                                              (model_performance_comparison['Set'] == 'Cross-Validation') |
+                                              (model_performance_comparison['Set'] == 'Test')) & 
+                                             (model_performance_comparison['Method']=='COXPH_FL1P')]['Concordance.Index'].values
+coxph_fl2p_ci = model_performance_comparison[((model_performance_comparison['Set'] == 'Train') |
+                                              (model_performance_comparison['Set'] == 'Cross-Validation') |
+                                              (model_performance_comparison['Set'] == 'Test')) & 
+                                             (model_performance_comparison['Method']=='COXPH_FL2P')]['Concordance.Index'].values
+coxph_el1l2p_ci = model_performance_comparison[((model_performance_comparison['Set'] == 'Train') |
+                                                (model_performance_comparison['Set'] == 'Cross-Validation') |
+                                                (model_performance_comparison['Set'] == 'Test')) &  
+                                               (model_performance_comparison['Method']=='COXPH_EL1L2P')]['Concordance.Index'].values
+coxph_pwl1l2p_ci = model_performance_comparison[((model_performance_comparison['Set'] == 'Train') |
+                                                 (model_performance_comparison['Set'] == 'Cross-Validation') |
+                                                 (model_performance_comparison['Set'] == 'Test')) & 
+                                                (model_performance_comparison['Method']=='COXPH_PWL1L2P')]['Concordance.Index'].values
+coxph_pwl2l1p_ci = model_performance_comparison[((model_performance_comparison['Set'] == 'Train') |
+                                                 (model_performance_comparison['Set'] == 'Cross-Validation') |
+                                                 (model_performance_comparison['Set'] == 'Test')) & 
+                                                (model_performance_comparison['Method']=='COXPH_PWL2L1P')]['Concordance.Index'].values
+```
+
+
+```python
+##################################
+# Plotting the values for the
+# concordance indices
+# for all models
+##################################
+ci_plot = pd.DataFrame({'COXPH_NP': list(coxph_np_ci),
+                        'COXPH_FL1P': list(coxph_fl1p_ci),
+                        'COXPH_FL2P': list(coxph_fl2p_ci),
+                        'COXPH_EL1L2P': list(coxph_el1l2p_ci),
+                        'COXPH_PWL1L2P': list(coxph_pwl1l2p_ci),
+                        'COXPH_PWL2L1P': list(coxph_pwl2l1p_ci)},
+                       index = set_labels)
+display(ci_plot)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>COXPH_NP</th>
+      <th>COXPH_FL1P</th>
+      <th>COXPH_FL2P</th>
+      <th>COXPH_EL1L2P</th>
+      <th>COXPH_PWL1L2P</th>
+      <th>COXPH_PWL2L1P</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Train</th>
+      <td>0.847854</td>
+      <td>0.831356</td>
+      <td>0.853381</td>
+      <td>0.846554</td>
+      <td>0.839402</td>
+      <td>0.850130</td>
+    </tr>
+    <tr>
+      <th>Cross-Validation</th>
+      <td>0.802364</td>
+      <td>0.811197</td>
+      <td>0.809983</td>
+      <td>0.816280</td>
+      <td>0.810178</td>
+      <td>0.815259</td>
+    </tr>
+    <tr>
+      <th>Test</th>
+      <td>0.848073</td>
+      <td>0.842630</td>
+      <td>0.867574</td>
+      <td>0.863039</td>
+      <td>0.852608</td>
+      <td>0.867120</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Plotting all the concordance indices
+# for all models
+##################################
+ci_plot = ci_plot.plot.barh(figsize=(10, 6), width=0.90)
+ci_plot.set_xlim(0.00,1.00)
+ci_plot.set_title("Model Comparison by Concordance Indices")
+ci_plot.set_xlabel("Concordance Index")
+ci_plot.set_ylabel("Data Set")
+ci_plot.grid(False)
+ci_plot.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+for container in ci_plot.containers:
+    ci_plot.bar_label(container, fmt='%.5f', padding=-50, color='white', fontweight='bold')
+```
+
+
+    
+![png](output_249_0.png)
+    
 
 
 # 2. Summary <a class="anchor" id="Summary"></a>
