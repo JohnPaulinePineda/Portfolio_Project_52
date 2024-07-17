@@ -7558,6 +7558,34 @@ cirrhosis_survival_test_modeling.head()
 
 ### 1.6.2 Cox Regression with No Penalty <a class="anchor" id="1.6.2"></a>
 
+[Survival Analysis](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.
+
+[Right-Censored Survival Data](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.
+
+[Survival Models](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.
+
+[Cox Proportional Hazards Regression](https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/j.2517-6161.1972.tb00899.x) is a semiparametric model used to study the relationship between the survival time of subjects and one or more predictor variables. The model assumes that the hazard ratio (the risk of the event occurring at a specific time) is a product of a baseline hazard function and an exponential function of the predictor variables. It also does not require the baseline hazard to be specified, thus making it a semiparametric model. As a method, it is well-established and widely used in survival analysis, can handle time-dependent covariates and provides a relatively straightforward interpretation. However, the process assumes proportional hazards, which may not hold in all datasets, and may be less flexible in capturing complex relationships between variables and survival times compared to some machine learning models. Given a dataset with survival times, event indicators, and predictor variables, the algorithm involves defining the partial likelihood function for the Cox model (which only considers the relative ordering of survival times); using optimization techniques to estimate the regression coefficients by maximizing the log-partial likelihood; estimating the baseline hazard function (although it is not explicitly required for predictions); and calculating the hazard function and survival function for new data using the estimated coefficients and baseline hazard.
+
+[No Penalty](https://lifelines.readthedocs.io/en/latest/), or zero regularization in cox regression, applies no additional constraints to the coefficients. The model estimates the coefficients by maximizing the partial likelihood function without any regularization term. This approach can lead to overfitting, especially when the number of predictors is large or when there is multicollinearity among the predictors.
+
+1. The [cox proportional hazards regression model](https://lifelines.readthedocs.io/en/latest/fitters/regression/CoxPHFitter.html) from the <mark style="background-color: #CCECFF"><b>lifelines.CoxPHFitter</b></mark> Python library API was implemented. 
+2. The model implementation used 2 hyperparameters:
+    * <span style="color: #FF0000">penalizer</span> = penalty to the size of the coefficients during regression fixed at a value = 0.00
+    * <span style="color: #FF0000">l1_ratio</span> = proportion of the L1 versus L2 penalty fixed at a value = 0.00
+3. All 17 variables were used for prediction given the non-zero values of the model coefficients.
+4. Out of all 17 predictors, only 3 variables were statistically significant:
+    * <span style="color: #FF0000">Age</span>
+    * <span style="color: #FF0000">Bilirubin</span>
+    * <span style="color: #FF0000">Prothrombin</span>
+5. The cross-validated model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8024
+6. The apparent model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8478
+7. The independent test model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8480
+8. Considerable difference in the apparent and cross-validated model performance observed, indicative of the presence of moderate model overfitting.
+9. Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.
+10. Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.
 
 
 ```python
@@ -7566,7 +7594,7 @@ cirrhosis_survival_test_modeling.head()
 # with No Penalty
 # and generating the summary
 ##################################
-cirrhosis_survival_coxph_L1_0_L2_0 = CoxPHFitter()
+cirrhosis_survival_coxph_L1_0_L2_0 = CoxPHFitter(penalizer=0.00, l1_ratio=0.00)
 cirrhosis_survival_coxph_L1_0_L2_0.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
 cirrhosis_survival_coxph_L1_0_L2_0.summary
 ```
@@ -8323,7 +8351,7 @@ cirrhosis_survival_coxph_L1_0_L2_0_explainer = shap.Explainer(cirrhosis_survival
 cirrhosis_survival_coxph_L1_0_L2_0_shap_values = cirrhosis_survival_coxph_L1_0_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:26,  6.05it/s]                         
+    PermutationExplainer explainer: 219it [00:30,  5.67it/s]                         
     
 
 
@@ -8344,6 +8372,32 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_0_L2_0_shap_values,
 
 ### 1.6.3 Cox Regression With Full L1 Penalty <a class="anchor" id="1.6.3"></a>
 
+[Survival Analysis](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.
+
+[Right-Censored Survival Data](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.
+
+[Survival Models](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.
+
+[Cox Proportional Hazards Regression](https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/j.2517-6161.1972.tb00899.x) is a semiparametric model used to study the relationship between the survival time of subjects and one or more predictor variables. The model assumes that the hazard ratio (the risk of the event occurring at a specific time) is a product of a baseline hazard function and an exponential function of the predictor variables. It also does not require the baseline hazard to be specified, thus making it a semiparametric model. As a method, it is well-established and widely used in survival analysis, can handle time-dependent covariates and provides a relatively straightforward interpretation. However, the process assumes proportional hazards, which may not hold in all datasets, and may be less flexible in capturing complex relationships between variables and survival times compared to some machine learning models. Given a dataset with survival times, event indicators, and predictor variables, the algorithm involves defining the partial likelihood function for the Cox model (which only considers the relative ordering of survival times); using optimization techniques to estimate the regression coefficients by maximizing the log-partial likelihood; estimating the baseline hazard function (although it is not explicitly required for predictions); and calculating the hazard function and survival function for new data using the estimated coefficients and baseline hazard.
+
+[Lasso Penalty](https://lifelines.readthedocs.io/en/latest/), or L1 regularization in cox regression, adds a constraint to the sum of the absolute values of the coefficients. The penalized log-likelihood function is composed of the partial likelihood of the cox model, a tuning parameter that controls the strength of the penalty, and the sum of the absolute model coefficients. The Lasso penalty encourages sparsity in the coefficients, meaning it tends to set some coefficients exactly to zero, effectively performing variable selection.
+
+1. The [cox proportional hazards regression model](https://lifelines.readthedocs.io/en/latest/fitters/regression/CoxPHFitter.html) from the <mark style="background-color: #CCECFF"><b>lifelines.CoxPHFitter</b></mark> Python library API was implemented. 
+2. The model implementation used 2 hyperparameters:
+    * <span style="color: #FF0000">penalizer</span> = penalty to the size of the coefficients during regression fixed at a value = 0.10
+    * <span style="color: #FF0000">l1_ratio</span> = proportion of the L1 versus L2 penalty fixed at a value = 1.00
+3. Only 8 out of the 17 variables were used for prediction given the non-zero values of the model coefficients.
+4. Out of all 8 predictors, only 1 variable was statistically significant:
+    * <span style="color: #FF0000">Bilirubin</span>
+5. The cross-validated model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8111
+6. The apparent model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8313
+7. The independent test model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8426
+8. Considerable difference in the apparent and cross-validated model performance observed, indicative of the presence of minimal model overfitting.
+9. Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.
+10. Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.
 
 
 ```python
@@ -8354,6 +8408,368 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_0_L2_0_shap_values,
 ##################################
 cirrhosis_survival_coxph_L1_100_L2_0 = CoxPHFitter(penalizer=0.10, l1_ratio=1.00)
 cirrhosis_survival_coxph_L1_100_L2_0.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
+cirrhosis_survival_coxph_L1_100_L2_0.print_summary()
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <th>model</th>
+      <td>lifelines.CoxPHFitter</td>
+    </tr>
+    <tr>
+      <th>duration col</th>
+      <td>'N_Days'</td>
+    </tr>
+    <tr>
+      <th>event col</th>
+      <td>'Status'</td>
+    </tr>
+    <tr>
+      <th>penalizer</th>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>l1 ratio</th>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>baseline estimation</th>
+      <td>breslow</td>
+    </tr>
+    <tr>
+      <th>number of observations</th>
+      <td>218</td>
+    </tr>
+    <tr>
+      <th>number of events observed</th>
+      <td>87</td>
+    </tr>
+    <tr>
+      <th>partial log-likelihood</th>
+      <td>-391.01</td>
+    </tr>
+    <tr>
+      <th>time fit was run</th>
+      <td>2024-07-17 11:42:08 UTC</td>
+    </tr>
+  </tbody>
+</table>
+</div><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th style="min-width: 12px;"></th>
+      <th style="min-width: 12px;">coef</th>
+      <th style="min-width: 12px;">exp(coef)</th>
+      <th style="min-width: 12px;">se(coef)</th>
+      <th style="min-width: 12px;">coef lower 95%</th>
+      <th style="min-width: 12px;">coef upper 95%</th>
+      <th style="min-width: 12px;">exp(coef) lower 95%</th>
+      <th style="min-width: 12px;">exp(coef) upper 95%</th>
+      <th style="min-width: 12px;">cmp to</th>
+      <th style="min-width: 12px;">z</th>
+      <th style="min-width: 12px;">p</th>
+      <th style="min-width: 12px;">-log2(p)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Age</th>
+      <td>0.10</td>
+      <td>1.11</td>
+      <td>0.11</td>
+      <td>-0.12</td>
+      <td>0.32</td>
+      <td>0.89</td>
+      <td>1.38</td>
+      <td>0.00</td>
+      <td>0.90</td>
+      <td>0.37</td>
+      <td>1.44</td>
+    </tr>
+    <tr>
+      <th>Bilirubin</th>
+      <td>0.72</td>
+      <td>2.06</td>
+      <td>0.16</td>
+      <td>0.42</td>
+      <td>1.02</td>
+      <td>1.52</td>
+      <td>2.79</td>
+      <td>0.00</td>
+      <td>4.64</td>
+      <td>&lt;0.005</td>
+      <td>18.14</td>
+    </tr>
+    <tr>
+      <th>Cholesterol</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Albumin</th>
+      <td>-0.06</td>
+      <td>0.94</td>
+      <td>0.13</td>
+      <td>-0.32</td>
+      <td>0.20</td>
+      <td>0.73</td>
+      <td>1.22</td>
+      <td>0.00</td>
+      <td>-0.45</td>
+      <td>0.65</td>
+      <td>0.61</td>
+    </tr>
+    <tr>
+      <th>Copper</th>
+      <td>0.03</td>
+      <td>1.03</td>
+      <td>0.13</td>
+      <td>-0.24</td>
+      <td>0.29</td>
+      <td>0.79</td>
+      <td>1.33</td>
+      <td>0.00</td>
+      <td>0.19</td>
+      <td>0.85</td>
+      <td>0.24</td>
+    </tr>
+    <tr>
+      <th>Alk_Phos</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>SGOT</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Tryglicerides</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Platelets</th>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Prothrombin</th>
+      <td>0.21</td>
+      <td>1.23</td>
+      <td>0.13</td>
+      <td>-0.04</td>
+      <td>0.47</td>
+      <td>0.96</td>
+      <td>1.59</td>
+      <td>0.00</td>
+      <td>1.62</td>
+      <td>0.11</td>
+      <td>3.25</td>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Sex</th>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Ascites</th>
+      <td>0.16</td>
+      <td>1.17</td>
+      <td>0.41</td>
+      <td>-0.64</td>
+      <td>0.97</td>
+      <td>0.53</td>
+      <td>2.63</td>
+      <td>0.00</td>
+      <td>0.39</td>
+      <td>0.70</td>
+      <td>0.52</td>
+    </tr>
+    <tr>
+      <th>Hepatomegaly</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Spiders</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Edema</th>
+      <td>0.17</td>
+      <td>1.18</td>
+      <td>0.32</td>
+      <td>-0.45</td>
+      <td>0.79</td>
+      <td>0.64</td>
+      <td>2.20</td>
+      <td>0.00</td>
+      <td>0.53</td>
+      <td>0.60</td>
+      <td>0.75</td>
+    </tr>
+    <tr>
+      <th>Stage_4.0</th>
+      <td>0.03</td>
+      <td>1.03</td>
+      <td>0.27</td>
+      <td>-0.50</td>
+      <td>0.56</td>
+      <td>0.61</td>
+      <td>1.75</td>
+      <td>0.00</td>
+      <td>0.12</td>
+      <td>0.91</td>
+      <td>0.14</td>
+    </tr>
+  </tbody>
+</table><br><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <th>Concordance</th>
+      <td>0.83</td>
+    </tr>
+    <tr>
+      <th>Partial AIC</th>
+      <td>816.03</td>
+    </tr>
+    <tr>
+      <th>log-likelihood ratio test</th>
+      <td>52.70 on 17 df</td>
+    </tr>
+    <tr>
+      <th>-log2(p) of ll-ratio test</th>
+      <td>15.94</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Consolidating the detailed values
+# of the model coefficients
+##################################
 cirrhosis_survival_coxph_L1_100_L2_0.summary
 ```
 
@@ -8677,7 +9093,7 @@ plt.show()
 
 
     
-![png](output_177_0.png)
+![png](output_178_0.png)
     
 
 
@@ -8702,7 +9118,7 @@ plt.show()
 
 
     
-![png](output_178_0.png)
+![png](output_179_0.png)
     
 
 
@@ -8862,7 +9278,7 @@ plt.show()
 
 
     
-![png](output_183_0.png)
+![png](output_184_0.png)
     
 
 
@@ -9095,7 +9511,7 @@ plt.show()
 
 
     
-![png](output_186_0.png)
+![png](output_187_0.png)
     
 
 
@@ -9109,7 +9525,7 @@ cirrhosis_survival_coxph_L1_100_L2_0_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_100_L2_0_shap_values = cirrhosis_survival_coxph_L1_100_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:18,  5.56it/s]                         
+    PermutationExplainer explainer: 219it [00:22,  5.36it/s]                         
     
 
 
@@ -9124,12 +9540,40 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_100_L2_0_shap_values,
 
 
     
-![png](output_188_0.png)
+![png](output_189_0.png)
     
 
 
 ### 1.6.4 Cox Regression With Full L2 Penalty <a class="anchor" id="1.6.4"></a>
 
+[Survival Analysis](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.
+
+[Right-Censored Survival Data](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.
+
+[Survival Models](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.
+
+[Cox Proportional Hazards Regression](https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/j.2517-6161.1972.tb00899.x) is a semiparametric model used to study the relationship between the survival time of subjects and one or more predictor variables. The model assumes that the hazard ratio (the risk of the event occurring at a specific time) is a product of a baseline hazard function and an exponential function of the predictor variables. It also does not require the baseline hazard to be specified, thus making it a semiparametric model. As a method, it is well-established and widely used in survival analysis, can handle time-dependent covariates and provides a relatively straightforward interpretation. However, the process assumes proportional hazards, which may not hold in all datasets, and may be less flexible in capturing complex relationships between variables and survival times compared to some machine learning models. Given a dataset with survival times, event indicators, and predictor variables, the algorithm involves defining the partial likelihood function for the Cox model (which only considers the relative ordering of survival times); using optimization techniques to estimate the regression coefficients by maximizing the log-partial likelihood; estimating the baseline hazard function (although it is not explicitly required for predictions); and calculating the hazard function and survival function for new data using the estimated coefficients and baseline hazard.
+
+[Ridge Penalty](https://lifelines.readthedocs.io/en/latest/), or L2 regularization in cox regression, adds a constraint to the sum of the squared values of the coefficients. The penalized log-likelihood function is composed of the partial likelihood of the cox model, a tuning parameter that controls the strength of the penalty, and the sum of the squared model coefficients. The Ridge penalty shrinks the coefficients towards zero but does not set them exactly to zero, which can be beneficial in dealing with multicollinearity among predictors.
+
+1. The [cox proportional hazards regression model](https://lifelines.readthedocs.io/en/latest/fitters/regression/CoxPHFitter.html) from the <mark style="background-color: #CCECFF"><b>lifelines.CoxPHFitter</b></mark> Python library API was implemented. 
+2. The model implementation used 2 hyperparameters:
+    * <span style="color: #FF0000">penalizer</span> = penalty to the size of the coefficients during regression fixed at a value = 0.10
+    * <span style="color: #FF0000">l1_ratio</span> = proportion of the L1 versus L2 penalty fixed at a value = 0.00
+3. All 17 variables were used for prediction given the non-zero values of the model coefficients.
+4. Out of all 17 predictors, only 3 variables were statistically significant:
+    * <span style="color: #FF0000">Age</span>
+    * <span style="color: #FF0000">Bilirubin</span>
+    * <span style="color: #FF0000">Prothrombin</span>
+5. The cross-validated model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8099
+6. The apparent model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8533
+7. The independent test model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8675
+8. Considerable difference in the apparent and cross-validated model performance observed, indicative of the presence of moderate model overfitting.
+9. Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.
+10. Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.
 
 
 ```python
@@ -9139,6 +9583,368 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_100_L2_0_shap_values,
 ##################################
 cirrhosis_survival_coxph_L1_0_L2_100 = CoxPHFitter(penalizer=0.10, l1_ratio=0.00)
 cirrhosis_survival_coxph_L1_0_L2_100.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
+cirrhosis_survival_coxph_L1_0_L2_100.print_summary()
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <th>model</th>
+      <td>lifelines.CoxPHFitter</td>
+    </tr>
+    <tr>
+      <th>duration col</th>
+      <td>'N_Days'</td>
+    </tr>
+    <tr>
+      <th>event col</th>
+      <td>'Status'</td>
+    </tr>
+    <tr>
+      <th>penalizer</th>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>l1 ratio</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>baseline estimation</th>
+      <td>breslow</td>
+    </tr>
+    <tr>
+      <th>number of observations</th>
+      <td>218</td>
+    </tr>
+    <tr>
+      <th>number of events observed</th>
+      <td>87</td>
+    </tr>
+    <tr>
+      <th>partial log-likelihood</th>
+      <td>-360.56</td>
+    </tr>
+    <tr>
+      <th>time fit was run</th>
+      <td>2024-07-17 11:42:37 UTC</td>
+    </tr>
+  </tbody>
+</table>
+</div><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th style="min-width: 12px;"></th>
+      <th style="min-width: 12px;">coef</th>
+      <th style="min-width: 12px;">exp(coef)</th>
+      <th style="min-width: 12px;">se(coef)</th>
+      <th style="min-width: 12px;">coef lower 95%</th>
+      <th style="min-width: 12px;">coef upper 95%</th>
+      <th style="min-width: 12px;">exp(coef) lower 95%</th>
+      <th style="min-width: 12px;">exp(coef) upper 95%</th>
+      <th style="min-width: 12px;">cmp to</th>
+      <th style="min-width: 12px;">z</th>
+      <th style="min-width: 12px;">p</th>
+      <th style="min-width: 12px;">-log2(p)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Age</th>
+      <td>0.27</td>
+      <td>1.31</td>
+      <td>0.11</td>
+      <td>0.06</td>
+      <td>0.49</td>
+      <td>1.06</td>
+      <td>1.63</td>
+      <td>0.00</td>
+      <td>2.48</td>
+      <td>0.01</td>
+      <td>6.25</td>
+    </tr>
+    <tr>
+      <th>Bilirubin</th>
+      <td>0.49</td>
+      <td>1.63</td>
+      <td>0.14</td>
+      <td>0.22</td>
+      <td>0.77</td>
+      <td>1.24</td>
+      <td>2.15</td>
+      <td>0.00</td>
+      <td>3.50</td>
+      <td>&lt;0.005</td>
+      <td>11.08</td>
+    </tr>
+    <tr>
+      <th>Cholesterol</th>
+      <td>0.08</td>
+      <td>1.09</td>
+      <td>0.12</td>
+      <td>-0.16</td>
+      <td>0.32</td>
+      <td>0.86</td>
+      <td>1.38</td>
+      <td>0.00</td>
+      <td>0.68</td>
+      <td>0.50</td>
+      <td>1.01</td>
+    </tr>
+    <tr>
+      <th>Albumin</th>
+      <td>-0.14</td>
+      <td>0.87</td>
+      <td>0.12</td>
+      <td>-0.38</td>
+      <td>0.09</td>
+      <td>0.69</td>
+      <td>1.09</td>
+      <td>0.00</td>
+      <td>-1.20</td>
+      <td>0.23</td>
+      <td>2.13</td>
+    </tr>
+    <tr>
+      <th>Copper</th>
+      <td>0.16</td>
+      <td>1.18</td>
+      <td>0.12</td>
+      <td>-0.07</td>
+      <td>0.40</td>
+      <td>0.93</td>
+      <td>1.49</td>
+      <td>0.00</td>
+      <td>1.34</td>
+      <td>0.18</td>
+      <td>2.48</td>
+    </tr>
+    <tr>
+      <th>Alk_Phos</th>
+      <td>0.04</td>
+      <td>1.04</td>
+      <td>0.12</td>
+      <td>-0.19</td>
+      <td>0.27</td>
+      <td>0.83</td>
+      <td>1.30</td>
+      <td>0.00</td>
+      <td>0.34</td>
+      <td>0.73</td>
+      <td>0.45</td>
+    </tr>
+    <tr>
+      <th>SGOT</th>
+      <td>0.17</td>
+      <td>1.19</td>
+      <td>0.12</td>
+      <td>-0.06</td>
+      <td>0.40</td>
+      <td>0.94</td>
+      <td>1.49</td>
+      <td>0.00</td>
+      <td>1.47</td>
+      <td>0.14</td>
+      <td>2.81</td>
+    </tr>
+    <tr>
+      <th>Tryglicerides</th>
+      <td>0.10</td>
+      <td>1.11</td>
+      <td>0.11</td>
+      <td>-0.11</td>
+      <td>0.32</td>
+      <td>0.89</td>
+      <td>1.37</td>
+      <td>0.00</td>
+      <td>0.92</td>
+      <td>0.36</td>
+      <td>1.49</td>
+    </tr>
+    <tr>
+      <th>Platelets</th>
+      <td>-0.07</td>
+      <td>0.93</td>
+      <td>0.11</td>
+      <td>-0.27</td>
+      <td>0.14</td>
+      <td>0.76</td>
+      <td>1.15</td>
+      <td>0.00</td>
+      <td>-0.64</td>
+      <td>0.52</td>
+      <td>0.94</td>
+    </tr>
+    <tr>
+      <th>Prothrombin</th>
+      <td>0.29</td>
+      <td>1.34</td>
+      <td>0.11</td>
+      <td>0.07</td>
+      <td>0.52</td>
+      <td>1.07</td>
+      <td>1.67</td>
+      <td>0.00</td>
+      <td>2.54</td>
+      <td>0.01</td>
+      <td>6.51</td>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <td>-0.17</td>
+      <td>0.85</td>
+      <td>0.21</td>
+      <td>-0.57</td>
+      <td>0.24</td>
+      <td>0.56</td>
+      <td>1.28</td>
+      <td>0.00</td>
+      <td>-0.79</td>
+      <td>0.43</td>
+      <td>1.23</td>
+    </tr>
+    <tr>
+      <th>Sex</th>
+      <td>0.01</td>
+      <td>1.01</td>
+      <td>0.29</td>
+      <td>-0.55</td>
+      <td>0.58</td>
+      <td>0.57</td>
+      <td>1.79</td>
+      <td>0.00</td>
+      <td>0.05</td>
+      <td>0.96</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <th>Ascites</th>
+      <td>0.23</td>
+      <td>1.26</td>
+      <td>0.35</td>
+      <td>-0.46</td>
+      <td>0.91</td>
+      <td>0.63</td>
+      <td>2.49</td>
+      <td>0.00</td>
+      <td>0.66</td>
+      <td>0.51</td>
+      <td>0.97</td>
+    </tr>
+    <tr>
+      <th>Hepatomegaly</th>
+      <td>0.14</td>
+      <td>1.15</td>
+      <td>0.23</td>
+      <td>-0.31</td>
+      <td>0.58</td>
+      <td>0.73</td>
+      <td>1.79</td>
+      <td>0.00</td>
+      <td>0.60</td>
+      <td>0.55</td>
+      <td>0.87</td>
+    </tr>
+    <tr>
+      <th>Spiders</th>
+      <td>0.03</td>
+      <td>1.03</td>
+      <td>0.24</td>
+      <td>-0.43</td>
+      <td>0.50</td>
+      <td>0.65</td>
+      <td>1.65</td>
+      <td>0.00</td>
+      <td>0.14</td>
+      <td>0.89</td>
+      <td>0.17</td>
+    </tr>
+    <tr>
+      <th>Edema</th>
+      <td>0.51</td>
+      <td>1.67</td>
+      <td>0.27</td>
+      <td>-0.01</td>
+      <td>1.04</td>
+      <td>0.99</td>
+      <td>2.82</td>
+      <td>0.00</td>
+      <td>1.91</td>
+      <td>0.06</td>
+      <td>4.16</td>
+    </tr>
+    <tr>
+      <th>Stage_4.0</th>
+      <td>0.24</td>
+      <td>1.27</td>
+      <td>0.24</td>
+      <td>-0.23</td>
+      <td>0.71</td>
+      <td>0.79</td>
+      <td>2.04</td>
+      <td>0.00</td>
+      <td>0.99</td>
+      <td>0.32</td>
+      <td>1.63</td>
+    </tr>
+  </tbody>
+</table><br><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <th>Concordance</th>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th>Partial AIC</th>
+      <td>755.12</td>
+    </tr>
+    <tr>
+      <th>log-likelihood ratio test</th>
+      <td>113.61 on 17 df</td>
+    </tr>
+    <tr>
+      <th>-log2(p) of ll-ratio test</th>
+      <td>51.82</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Consolidating the detailed values
+# of the model coefficients
+##################################
 cirrhosis_survival_coxph_L1_0_L2_100.summary
 ```
 
@@ -9462,7 +10268,7 @@ plt.show()
 
 
     
-![png](output_191_0.png)
+![png](output_193_0.png)
     
 
 
@@ -9487,7 +10293,7 @@ plt.show()
 
 
     
-![png](output_192_0.png)
+![png](output_194_0.png)
     
 
 
@@ -9647,7 +10453,7 @@ plt.show()
 
 
     
-![png](output_197_0.png)
+![png](output_199_0.png)
     
 
 
@@ -9880,7 +10686,7 @@ plt.show()
 
 
     
-![png](output_200_0.png)
+![png](output_202_0.png)
     
 
 
@@ -9894,7 +10700,7 @@ cirrhosis_survival_coxph_L1_0_L2_100_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_0_L2_100_shap_values = cirrhosis_survival_coxph_L1_0_L2_100_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:16,  4.89it/s]                         
+    PermutationExplainer explainer: 219it [00:21,  5.38it/s]                         
     
 
 
@@ -9909,12 +10715,39 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_0_L2_100_shap_values,
 
 
     
-![png](output_202_0.png)
+![png](output_204_0.png)
     
 
 
 ### 1.6.5 Cox Regression With Equal L1|L2 Penalty <a class="anchor" id="1.6.5"></a>
 
+[Survival Analysis](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.
+
+[Right-Censored Survival Data](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.
+
+[Survival Models](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.
+
+[Cox Proportional Hazards Regression](https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/j.2517-6161.1972.tb00899.x) is a semiparametric model used to study the relationship between the survival time of subjects and one or more predictor variables. The model assumes that the hazard ratio (the risk of the event occurring at a specific time) is a product of a baseline hazard function and an exponential function of the predictor variables. It also does not require the baseline hazard to be specified, thus making it a semiparametric model. As a method, it is well-established and widely used in survival analysis, can handle time-dependent covariates and provides a relatively straightforward interpretation. However, the process assumes proportional hazards, which may not hold in all datasets, and may be less flexible in capturing complex relationships between variables and survival times compared to some machine learning models. Given a dataset with survival times, event indicators, and predictor variables, the algorithm involves defining the partial likelihood function for the Cox model (which only considers the relative ordering of survival times); using optimization techniques to estimate the regression coefficients by maximizing the log-partial likelihood; estimating the baseline hazard function (although it is not explicitly required for predictions); and calculating the hazard function and survival function for new data using the estimated coefficients and baseline hazard.
+
+[Elastic Net Penalty](https://lifelines.readthedocs.io/en/latest/), or combined L1 and L2 regularization in cox regression, adds a constraint to both the sum of the absolute and squared values of the coefficients. The penalized log-likelihood function is composed of the partial likelihood of the cox model, a tuning parameter that controls the strength of both lasso and ridge penalties, the sum of the absolute model coefficients, and the sum of the squared model coefficients. The Elastic Net penalty combines the benefits of both Lasso and Ridge, promoting sparsity while also dealing with multicollinearity.
+
+1. The [cox proportional hazards regression model](https://lifelines.readthedocs.io/en/latest/fitters/regression/CoxPHFitter.html) from the <mark style="background-color: #CCECFF"><b>lifelines.CoxPHFitter</b></mark> Python library API was implemented. 
+2. The model implementation used 2 hyperparameters:
+    * <span style="color: #FF0000">penalizer</span> = penalty to the size of the coefficients during regression fixed at a value = 0.10
+    * <span style="color: #FF0000">l1_ratio</span> = proportion of the L1 versus L2 penalty fixed at a value = 0.50
+3. Only 10 out of the 17 variables were used for prediction given the non-zero values of the model coefficients.
+4. Out of all 10 predictors, only 2 variables were statistically significant:
+    * <span style="color: #FF0000">Bilirubin</span>
+    * <span style="color: #FF0000">Prothrombin</span>
+5. The cross-validated model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8162
+6. The apparent model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8465
+7. The independent test model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8630
+8. Considerable difference in the apparent and cross-validated model performance observed, indicative of the presence of minimal model overfitting.
+9. Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.
+10. Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.
 
 
 ```python
@@ -9925,6 +10758,368 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_0_L2_100_shap_values,
 ##################################
 cirrhosis_survival_coxph_L1_50_L2_50 = CoxPHFitter(penalizer=0.10, l1_ratio=0.50)
 cirrhosis_survival_coxph_L1_50_L2_50.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
+cirrhosis_survival_coxph_L1_50_L2_50.print_summary()
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <th>model</th>
+      <td>lifelines.CoxPHFitter</td>
+    </tr>
+    <tr>
+      <th>duration col</th>
+      <td>'N_Days'</td>
+    </tr>
+    <tr>
+      <th>event col</th>
+      <td>'Status'</td>
+    </tr>
+    <tr>
+      <th>penalizer</th>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>l1 ratio</th>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>baseline estimation</th>
+      <td>breslow</td>
+    </tr>
+    <tr>
+      <th>number of observations</th>
+      <td>218</td>
+    </tr>
+    <tr>
+      <th>number of events observed</th>
+      <td>87</td>
+    </tr>
+    <tr>
+      <th>partial log-likelihood</th>
+      <td>-378.64</td>
+    </tr>
+    <tr>
+      <th>time fit was run</th>
+      <td>2024-07-17 11:43:03 UTC</td>
+    </tr>
+  </tbody>
+</table>
+</div><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th style="min-width: 12px;"></th>
+      <th style="min-width: 12px;">coef</th>
+      <th style="min-width: 12px;">exp(coef)</th>
+      <th style="min-width: 12px;">se(coef)</th>
+      <th style="min-width: 12px;">coef lower 95%</th>
+      <th style="min-width: 12px;">coef upper 95%</th>
+      <th style="min-width: 12px;">exp(coef) lower 95%</th>
+      <th style="min-width: 12px;">exp(coef) upper 95%</th>
+      <th style="min-width: 12px;">cmp to</th>
+      <th style="min-width: 12px;">z</th>
+      <th style="min-width: 12px;">p</th>
+      <th style="min-width: 12px;">-log2(p)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Age</th>
+      <td>0.17</td>
+      <td>1.19</td>
+      <td>0.11</td>
+      <td>-0.03</td>
+      <td>0.38</td>
+      <td>0.97</td>
+      <td>1.46</td>
+      <td>0.00</td>
+      <td>1.64</td>
+      <td>0.10</td>
+      <td>3.30</td>
+    </tr>
+    <tr>
+      <th>Bilirubin</th>
+      <td>0.62</td>
+      <td>1.86</td>
+      <td>0.15</td>
+      <td>0.32</td>
+      <td>0.92</td>
+      <td>1.38</td>
+      <td>2.52</td>
+      <td>0.00</td>
+      <td>4.07</td>
+      <td>&lt;0.005</td>
+      <td>14.38</td>
+    </tr>
+    <tr>
+      <th>Cholesterol</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Albumin</th>
+      <td>-0.11</td>
+      <td>0.90</td>
+      <td>0.12</td>
+      <td>-0.35</td>
+      <td>0.14</td>
+      <td>0.70</td>
+      <td>1.15</td>
+      <td>0.00</td>
+      <td>-0.86</td>
+      <td>0.39</td>
+      <td>1.35</td>
+    </tr>
+    <tr>
+      <th>Copper</th>
+      <td>0.12</td>
+      <td>1.13</td>
+      <td>0.12</td>
+      <td>-0.11</td>
+      <td>0.36</td>
+      <td>0.89</td>
+      <td>1.44</td>
+      <td>0.00</td>
+      <td>1.03</td>
+      <td>0.30</td>
+      <td>1.72</td>
+    </tr>
+    <tr>
+      <th>Alk_Phos</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>SGOT</th>
+      <td>0.05</td>
+      <td>1.06</td>
+      <td>0.12</td>
+      <td>-0.19</td>
+      <td>0.30</td>
+      <td>0.83</td>
+      <td>1.34</td>
+      <td>0.00</td>
+      <td>0.44</td>
+      <td>0.66</td>
+      <td>0.60</td>
+    </tr>
+    <tr>
+      <th>Tryglicerides</th>
+      <td>0.05</td>
+      <td>1.05</td>
+      <td>0.11</td>
+      <td>-0.17</td>
+      <td>0.26</td>
+      <td>0.85</td>
+      <td>1.30</td>
+      <td>0.00</td>
+      <td>0.43</td>
+      <td>0.67</td>
+      <td>0.58</td>
+    </tr>
+    <tr>
+      <th>Platelets</th>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Prothrombin</th>
+      <td>0.25</td>
+      <td>1.29</td>
+      <td>0.12</td>
+      <td>0.01</td>
+      <td>0.49</td>
+      <td>1.01</td>
+      <td>1.63</td>
+      <td>0.00</td>
+      <td>2.07</td>
+      <td>0.04</td>
+      <td>4.71</td>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Sex</th>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Ascites</th>
+      <td>0.18</td>
+      <td>1.20</td>
+      <td>0.37</td>
+      <td>-0.54</td>
+      <td>0.91</td>
+      <td>0.58</td>
+      <td>2.47</td>
+      <td>0.00</td>
+      <td>0.50</td>
+      <td>0.62</td>
+      <td>0.70</td>
+    </tr>
+    <tr>
+      <th>Hepatomegaly</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.24</td>
+      <td>-0.47</td>
+      <td>0.47</td>
+      <td>0.63</td>
+      <td>1.60</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Spiders</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Edema</th>
+      <td>0.36</td>
+      <td>1.44</td>
+      <td>0.28</td>
+      <td>-0.18</td>
+      <td>0.91</td>
+      <td>0.83</td>
+      <td>2.48</td>
+      <td>0.00</td>
+      <td>1.31</td>
+      <td>0.19</td>
+      <td>2.39</td>
+    </tr>
+    <tr>
+      <th>Stage_4.0</th>
+      <td>0.15</td>
+      <td>1.16</td>
+      <td>0.26</td>
+      <td>-0.35</td>
+      <td>0.66</td>
+      <td>0.70</td>
+      <td>1.93</td>
+      <td>0.00</td>
+      <td>0.59</td>
+      <td>0.56</td>
+      <td>0.85</td>
+    </tr>
+  </tbody>
+</table><br><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <th>Concordance</th>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th>Partial AIC</th>
+      <td>791.29</td>
+    </tr>
+    <tr>
+      <th>log-likelihood ratio test</th>
+      <td>77.44 on 17 df</td>
+    </tr>
+    <tr>
+      <th>-log2(p) of ll-ratio test</th>
+      <td>29.78</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Consolidating the detailed values
+# of the model coefficients
+##################################
 cirrhosis_survival_coxph_L1_50_L2_50.summary
 ```
 
@@ -10248,7 +11443,7 @@ plt.show()
 
 
     
-![png](output_205_0.png)
+![png](output_208_0.png)
     
 
 
@@ -10273,7 +11468,7 @@ plt.show()
 
 
     
-![png](output_206_0.png)
+![png](output_209_0.png)
     
 
 
@@ -10433,7 +11628,7 @@ plt.show()
 
 
     
-![png](output_211_0.png)
+![png](output_214_0.png)
     
 
 
@@ -10666,7 +11861,7 @@ plt.show()
 
 
     
-![png](output_214_0.png)
+![png](output_217_0.png)
     
 
 
@@ -10680,7 +11875,7 @@ cirrhosis_survival_coxph_L1_50_L2_50_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_50_L2_50_shap_values = cirrhosis_survival_coxph_L1_50_L2_50_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:18,  4.18it/s]                         
+    PermutationExplainer explainer: 219it [00:22,  5.35it/s]                         
     
 
 
@@ -10695,12 +11890,38 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_50_L2_50_shap_values,
 
 
     
-![png](output_216_0.png)
+![png](output_219_0.png)
     
 
 
 ### 1.6.6 Cox Regression With Predominantly L1-Weighted|L2 Penalty <a class="anchor" id="1.6.6"></a>
 
+[Survival Analysis](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.
+
+[Right-Censored Survival Data](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.
+
+[Survival Models](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.
+
+[Cox Proportional Hazards Regression](https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/j.2517-6161.1972.tb00899.x) is a semiparametric model used to study the relationship between the survival time of subjects and one or more predictor variables. The model assumes that the hazard ratio (the risk of the event occurring at a specific time) is a product of a baseline hazard function and an exponential function of the predictor variables. It also does not require the baseline hazard to be specified, thus making it a semiparametric model. As a method, it is well-established and widely used in survival analysis, can handle time-dependent covariates and provides a relatively straightforward interpretation. However, the process assumes proportional hazards, which may not hold in all datasets, and may be less flexible in capturing complex relationships between variables and survival times compared to some machine learning models. Given a dataset with survival times, event indicators, and predictor variables, the algorithm involves defining the partial likelihood function for the Cox model (which only considers the relative ordering of survival times); using optimization techniques to estimate the regression coefficients by maximizing the log-partial likelihood; estimating the baseline hazard function (although it is not explicitly required for predictions); and calculating the hazard function and survival function for new data using the estimated coefficients and baseline hazard.
+
+[Elastic Net Penalty](https://lifelines.readthedocs.io/en/latest/), or combined L1 and L2 regularization in cox regression, adds a constraint to both the sum of the absolute and squared values of the coefficients. The penalized log-likelihood function is composed of the partial likelihood of the cox model, a tuning parameter that controls the strength of both lasso and ridge penalties, the sum of the absolute model coefficients, and the sum of the squared model coefficients. The Elastic Net penalty combines the benefits of both Lasso and Ridge, promoting sparsity while also dealing with multicollinearity.
+
+1. The [cox proportional hazards regression model](https://lifelines.readthedocs.io/en/latest/fitters/regression/CoxPHFitter.html) from the <mark style="background-color: #CCECFF"><b>lifelines.CoxPHFitter</b></mark> Python library API was implemented. 
+2. The model implementation used 2 hyperparameters:
+    * <span style="color: #FF0000">penalizer</span> = penalty to the size of the coefficients during regression fixed at a value = 0.10
+    * <span style="color: #FF0000">l1_ratio</span> = proportion of the L1 versus L2 penalty fixed at a value = 0.75
+3. Only 8 out of the 17 variables were used for prediction given the non-zero values of the model coefficients.
+4. Out of all 8 predictors, only 2 variables were statistically significant:
+    * <span style="color: #FF0000">Bilirubin</span>
+5. The cross-validated model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8101
+6. The apparent model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8394
+7. The independent test model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8526
+8. Considerable difference in the apparent and cross-validated model performance observed, indicative of the presence of minimal model overfitting.
+9. Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.
+10. Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.
 
 
 ```python
@@ -10711,6 +11932,368 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_50_L2_50_shap_values,
 ##################################
 cirrhosis_survival_coxph_L1_75_L2_25 = CoxPHFitter(penalizer=0.10, l1_ratio=0.75)
 cirrhosis_survival_coxph_L1_75_L2_25.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
+cirrhosis_survival_coxph_L1_75_L2_25.print_summary()
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <th>model</th>
+      <td>lifelines.CoxPHFitter</td>
+    </tr>
+    <tr>
+      <th>duration col</th>
+      <td>'N_Days'</td>
+    </tr>
+    <tr>
+      <th>event col</th>
+      <td>'Status'</td>
+    </tr>
+    <tr>
+      <th>penalizer</th>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>l1 ratio</th>
+      <td>0.75</td>
+    </tr>
+    <tr>
+      <th>baseline estimation</th>
+      <td>breslow</td>
+    </tr>
+    <tr>
+      <th>number of observations</th>
+      <td>218</td>
+    </tr>
+    <tr>
+      <th>number of events observed</th>
+      <td>87</td>
+    </tr>
+    <tr>
+      <th>partial log-likelihood</th>
+      <td>-385.37</td>
+    </tr>
+    <tr>
+      <th>time fit was run</th>
+      <td>2024-07-17 11:43:32 UTC</td>
+    </tr>
+  </tbody>
+</table>
+</div><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th style="min-width: 12px;"></th>
+      <th style="min-width: 12px;">coef</th>
+      <th style="min-width: 12px;">exp(coef)</th>
+      <th style="min-width: 12px;">se(coef)</th>
+      <th style="min-width: 12px;">coef lower 95%</th>
+      <th style="min-width: 12px;">coef upper 95%</th>
+      <th style="min-width: 12px;">exp(coef) lower 95%</th>
+      <th style="min-width: 12px;">exp(coef) upper 95%</th>
+      <th style="min-width: 12px;">cmp to</th>
+      <th style="min-width: 12px;">z</th>
+      <th style="min-width: 12px;">p</th>
+      <th style="min-width: 12px;">-log2(p)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Age</th>
+      <td>0.13</td>
+      <td>1.14</td>
+      <td>0.11</td>
+      <td>-0.08</td>
+      <td>0.35</td>
+      <td>0.93</td>
+      <td>1.42</td>
+      <td>0.00</td>
+      <td>1.24</td>
+      <td>0.21</td>
+      <td>2.23</td>
+    </tr>
+    <tr>
+      <th>Bilirubin</th>
+      <td>0.68</td>
+      <td>1.98</td>
+      <td>0.15</td>
+      <td>0.39</td>
+      <td>0.97</td>
+      <td>1.48</td>
+      <td>2.64</td>
+      <td>0.00</td>
+      <td>4.64</td>
+      <td>&lt;0.005</td>
+      <td>18.16</td>
+    </tr>
+    <tr>
+      <th>Cholesterol</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Albumin</th>
+      <td>-0.09</td>
+      <td>0.92</td>
+      <td>0.13</td>
+      <td>-0.34</td>
+      <td>0.17</td>
+      <td>0.71</td>
+      <td>1.18</td>
+      <td>0.00</td>
+      <td>-0.66</td>
+      <td>0.51</td>
+      <td>0.98</td>
+    </tr>
+    <tr>
+      <th>Copper</th>
+      <td>0.09</td>
+      <td>1.09</td>
+      <td>0.13</td>
+      <td>-0.16</td>
+      <td>0.34</td>
+      <td>0.85</td>
+      <td>1.40</td>
+      <td>0.00</td>
+      <td>0.69</td>
+      <td>0.49</td>
+      <td>1.04</td>
+    </tr>
+    <tr>
+      <th>Alk_Phos</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>SGOT</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Tryglicerides</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.11</td>
+      <td>-0.22</td>
+      <td>0.22</td>
+      <td>0.80</td>
+      <td>1.25</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Platelets</th>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Prothrombin</th>
+      <td>0.23</td>
+      <td>1.25</td>
+      <td>0.13</td>
+      <td>-0.02</td>
+      <td>0.47</td>
+      <td>0.98</td>
+      <td>1.60</td>
+      <td>0.00</td>
+      <td>1.78</td>
+      <td>0.07</td>
+      <td>3.75</td>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Sex</th>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Ascites</th>
+      <td>0.19</td>
+      <td>1.21</td>
+      <td>0.39</td>
+      <td>-0.57</td>
+      <td>0.95</td>
+      <td>0.57</td>
+      <td>2.60</td>
+      <td>0.00</td>
+      <td>0.50</td>
+      <td>0.62</td>
+      <td>0.69</td>
+    </tr>
+    <tr>
+      <th>Hepatomegaly</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Spiders</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Edema</th>
+      <td>0.27</td>
+      <td>1.31</td>
+      <td>0.29</td>
+      <td>-0.31</td>
+      <td>0.84</td>
+      <td>0.74</td>
+      <td>2.33</td>
+      <td>0.00</td>
+      <td>0.91</td>
+      <td>0.36</td>
+      <td>1.47</td>
+    </tr>
+    <tr>
+      <th>Stage_4.0</th>
+      <td>0.09</td>
+      <td>1.09</td>
+      <td>0.26</td>
+      <td>-0.42</td>
+      <td>0.59</td>
+      <td>0.66</td>
+      <td>1.80</td>
+      <td>0.00</td>
+      <td>0.34</td>
+      <td>0.74</td>
+      <td>0.44</td>
+    </tr>
+  </tbody>
+</table><br><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <th>Concordance</th>
+      <td>0.84</td>
+    </tr>
+    <tr>
+      <th>Partial AIC</th>
+      <td>804.74</td>
+    </tr>
+    <tr>
+      <th>log-likelihood ratio test</th>
+      <td>63.99 on 17 df</td>
+    </tr>
+    <tr>
+      <th>-log2(p) of ll-ratio test</th>
+      <td>22.07</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Consolidating the detailed values
+# of the model coefficients
+##################################
 cirrhosis_survival_coxph_L1_75_L2_25.summary
 ```
 
@@ -11034,7 +12617,7 @@ plt.show()
 
 
     
-![png](output_219_0.png)
+![png](output_223_0.png)
     
 
 
@@ -11059,7 +12642,7 @@ plt.show()
 
 
     
-![png](output_220_0.png)
+![png](output_224_0.png)
     
 
 
@@ -11219,7 +12802,7 @@ plt.show()
 
 
     
-![png](output_225_0.png)
+![png](output_229_0.png)
     
 
 
@@ -11452,7 +13035,7 @@ plt.show()
 
 
     
-![png](output_228_0.png)
+![png](output_232_0.png)
     
 
 
@@ -11466,7 +13049,7 @@ cirrhosis_survival_coxph_L1_75_L2_25_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_75_L2_25_shap_values = cirrhosis_survival_coxph_L1_75_L2_25_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:23,  5.37it/s]                         
+    PermutationExplainer explainer: 219it [00:22,  5.43it/s]                         
     
 
 
@@ -11481,12 +13064,40 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_75_L2_25_shap_values,
 
 
     
-![png](output_230_0.png)
+![png](output_234_0.png)
     
 
 
 ### 1.6.7 Cox Regression With Predominantly L2-Weighted|L1 Penalty <a class="anchor" id="1.6.7"></a>
 
+[Survival Analysis](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.
+
+[Right-Censored Survival Data](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.
+
+[Survival Models](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.
+
+[Cox Proportional Hazards Regression](https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/j.2517-6161.1972.tb00899.x) is a semiparametric model used to study the relationship between the survival time of subjects and one or more predictor variables. The model assumes that the hazard ratio (the risk of the event occurring at a specific time) is a product of a baseline hazard function and an exponential function of the predictor variables. It also does not require the baseline hazard to be specified, thus making it a semiparametric model. As a method, it is well-established and widely used in survival analysis, can handle time-dependent covariates and provides a relatively straightforward interpretation. However, the process assumes proportional hazards, which may not hold in all datasets, and may be less flexible in capturing complex relationships between variables and survival times compared to some machine learning models. Given a dataset with survival times, event indicators, and predictor variables, the algorithm involves defining the partial likelihood function for the Cox model (which only considers the relative ordering of survival times); using optimization techniques to estimate the regression coefficients by maximizing the log-partial likelihood; estimating the baseline hazard function (although it is not explicitly required for predictions); and calculating the hazard function and survival function for new data using the estimated coefficients and baseline hazard.
+
+[Elastic Net Penalty](https://lifelines.readthedocs.io/en/latest/), or combined L1 and L2 regularization in cox regression, adds a constraint to both the sum of the absolute and squared values of the coefficients. The penalized log-likelihood function is composed of the partial likelihood of the cox model, a tuning parameter that controls the strength of both lasso and ridge penalties, the sum of the absolute model coefficients, and the sum of the squared model coefficients. The Elastic Net penalty combines the benefits of both Lasso and Ridge, promoting sparsity while also dealing with multicollinearity.
+
+1. The [cox proportional hazards regression model](https://lifelines.readthedocs.io/en/latest/fitters/regression/CoxPHFitter.html) from the <mark style="background-color: #CCECFF"><b>lifelines.CoxPHFitter</b></mark> Python library API was implemented. 
+2. The model implementation used 2 hyperparameters:
+    * <span style="color: #FF0000">penalizer</span> = penalty to the size of the coefficients during regression fixed at a value = 0.10
+    * <span style="color: #FF0000">l1_ratio</span> = proportion of the L1 versus L2 penalty fixed at a value = 0.25
+3. Only 12 out of the 17 variables were used for prediction given the non-zero values of the model coefficients.
+4. Out of all 12 predictors, only 2 variables were statistically significant:
+    * <span style="color: #FF0000">Age</span>
+    * <span style="color: #FF0000">Bilirubin</span>
+    * <span style="color: #FF0000">Prothrombin</span>
+5. The cross-validated model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8152
+6. The apparent model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8501
+7. The independent test model performance of the model is summarized as follows:
+    * **Concordance Index** = 0.8671
+8. Considerable difference in the apparent and cross-validated model performance observed, indicative of the presence of moderate model overfitting.
+9. Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.
+10. Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.
 
 
 ```python
@@ -11497,6 +13108,368 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_75_L2_25_shap_values,
 ##################################
 cirrhosis_survival_coxph_L1_25_L2_75 = CoxPHFitter(penalizer=0.10, l1_ratio=0.25)
 cirrhosis_survival_coxph_L1_25_L2_75.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
+cirrhosis_survival_coxph_L1_25_L2_75.print_summary()
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <th>model</th>
+      <td>lifelines.CoxPHFitter</td>
+    </tr>
+    <tr>
+      <th>duration col</th>
+      <td>'N_Days'</td>
+    </tr>
+    <tr>
+      <th>event col</th>
+      <td>'Status'</td>
+    </tr>
+    <tr>
+      <th>penalizer</th>
+      <td>0.1</td>
+    </tr>
+    <tr>
+      <th>l1 ratio</th>
+      <td>0.25</td>
+    </tr>
+    <tr>
+      <th>baseline estimation</th>
+      <td>breslow</td>
+    </tr>
+    <tr>
+      <th>number of observations</th>
+      <td>218</td>
+    </tr>
+    <tr>
+      <th>number of events observed</th>
+      <td>87</td>
+    </tr>
+    <tr>
+      <th>partial log-likelihood</th>
+      <td>-370.52</td>
+    </tr>
+    <tr>
+      <th>time fit was run</th>
+      <td>2024-07-17 11:44:02 UTC</td>
+    </tr>
+  </tbody>
+</table>
+</div><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th style="min-width: 12px;"></th>
+      <th style="min-width: 12px;">coef</th>
+      <th style="min-width: 12px;">exp(coef)</th>
+      <th style="min-width: 12px;">se(coef)</th>
+      <th style="min-width: 12px;">coef lower 95%</th>
+      <th style="min-width: 12px;">coef upper 95%</th>
+      <th style="min-width: 12px;">exp(coef) lower 95%</th>
+      <th style="min-width: 12px;">exp(coef) upper 95%</th>
+      <th style="min-width: 12px;">cmp to</th>
+      <th style="min-width: 12px;">z</th>
+      <th style="min-width: 12px;">p</th>
+      <th style="min-width: 12px;">-log2(p)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Age</th>
+      <td>0.21</td>
+      <td>1.23</td>
+      <td>0.11</td>
+      <td>0.00</td>
+      <td>0.42</td>
+      <td>1.00</td>
+      <td>1.52</td>
+      <td>0.00</td>
+      <td>1.99</td>
+      <td>0.05</td>
+      <td>4.41</td>
+    </tr>
+    <tr>
+      <th>Bilirubin</th>
+      <td>0.56</td>
+      <td>1.76</td>
+      <td>0.14</td>
+      <td>0.28</td>
+      <td>0.84</td>
+      <td>1.33</td>
+      <td>2.32</td>
+      <td>0.00</td>
+      <td>3.94</td>
+      <td>&lt;0.005</td>
+      <td>13.59</td>
+    </tr>
+    <tr>
+      <th>Cholesterol</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Albumin</th>
+      <td>-0.13</td>
+      <td>0.88</td>
+      <td>0.12</td>
+      <td>-0.37</td>
+      <td>0.11</td>
+      <td>0.69</td>
+      <td>1.11</td>
+      <td>0.00</td>
+      <td>-1.07</td>
+      <td>0.29</td>
+      <td>1.81</td>
+    </tr>
+    <tr>
+      <th>Copper</th>
+      <td>0.15</td>
+      <td>1.16</td>
+      <td>0.12</td>
+      <td>-0.08</td>
+      <td>0.38</td>
+      <td>0.92</td>
+      <td>1.46</td>
+      <td>0.00</td>
+      <td>1.28</td>
+      <td>0.20</td>
+      <td>2.31</td>
+    </tr>
+    <tr>
+      <th>Alk_Phos</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>SGOT</th>
+      <td>0.12</td>
+      <td>1.13</td>
+      <td>0.12</td>
+      <td>-0.11</td>
+      <td>0.36</td>
+      <td>0.90</td>
+      <td>1.43</td>
+      <td>0.00</td>
+      <td>1.03</td>
+      <td>0.30</td>
+      <td>1.72</td>
+    </tr>
+    <tr>
+      <th>Tryglicerides</th>
+      <td>0.09</td>
+      <td>1.09</td>
+      <td>0.11</td>
+      <td>-0.12</td>
+      <td>0.29</td>
+      <td>0.89</td>
+      <td>1.34</td>
+      <td>0.00</td>
+      <td>0.81</td>
+      <td>0.42</td>
+      <td>1.25</td>
+    </tr>
+    <tr>
+      <th>Platelets</th>
+      <td>-0.02</td>
+      <td>0.98</td>
+      <td>0.10</td>
+      <td>-0.22</td>
+      <td>0.18</td>
+      <td>0.80</td>
+      <td>1.20</td>
+      <td>0.00</td>
+      <td>-0.20</td>
+      <td>0.84</td>
+      <td>0.25</td>
+    </tr>
+    <tr>
+      <th>Prothrombin</th>
+      <td>0.27</td>
+      <td>1.31</td>
+      <td>0.12</td>
+      <td>0.04</td>
+      <td>0.50</td>
+      <td>1.04</td>
+      <td>1.65</td>
+      <td>0.00</td>
+      <td>2.34</td>
+      <td>0.02</td>
+      <td>5.68</td>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Sex</th>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Ascites</th>
+      <td>0.17</td>
+      <td>1.19</td>
+      <td>0.35</td>
+      <td>-0.52</td>
+      <td>0.86</td>
+      <td>0.59</td>
+      <td>2.37</td>
+      <td>0.00</td>
+      <td>0.49</td>
+      <td>0.63</td>
+      <td>0.68</td>
+    </tr>
+    <tr>
+      <th>Hepatomegaly</th>
+      <td>0.07</td>
+      <td>1.07</td>
+      <td>0.23</td>
+      <td>-0.38</td>
+      <td>0.53</td>
+      <td>0.68</td>
+      <td>1.69</td>
+      <td>0.00</td>
+      <td>0.31</td>
+      <td>0.76</td>
+      <td>0.40</td>
+    </tr>
+    <tr>
+      <th>Spiders</th>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>-0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>Edema</th>
+      <td>0.43</td>
+      <td>1.54</td>
+      <td>0.27</td>
+      <td>-0.10</td>
+      <td>0.96</td>
+      <td>0.90</td>
+      <td>2.61</td>
+      <td>0.00</td>
+      <td>1.59</td>
+      <td>0.11</td>
+      <td>3.16</td>
+    </tr>
+    <tr>
+      <th>Stage_4.0</th>
+      <td>0.19</td>
+      <td>1.21</td>
+      <td>0.25</td>
+      <td>-0.29</td>
+      <td>0.68</td>
+      <td>0.75</td>
+      <td>1.97</td>
+      <td>0.00</td>
+      <td>0.78</td>
+      <td>0.44</td>
+      <td>1.20</td>
+    </tr>
+  </tbody>
+</table><br><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <tbody>
+    <tr>
+      <th>Concordance</th>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th>Partial AIC</th>
+      <td>775.05</td>
+    </tr>
+    <tr>
+      <th>log-likelihood ratio test</th>
+      <td>93.69 on 17 df</td>
+    </tr>
+    <tr>
+      <th>-log2(p) of ll-ratio test</th>
+      <td>39.49</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Consolidating the detailed values
+# of the model coefficients
+##################################
 cirrhosis_survival_coxph_L1_25_L2_75.summary
 ```
 
@@ -11820,7 +13793,7 @@ plt.show()
 
 
     
-![png](output_233_0.png)
+![png](output_238_0.png)
     
 
 
@@ -11845,7 +13818,7 @@ plt.show()
 
 
     
-![png](output_234_0.png)
+![png](output_239_0.png)
     
 
 
@@ -12005,7 +13978,7 @@ plt.show()
 
 
     
-![png](output_239_0.png)
+![png](output_244_0.png)
     
 
 
@@ -12238,7 +14211,7 @@ plt.show()
 
 
     
-![png](output_242_0.png)
+![png](output_247_0.png)
     
 
 
@@ -12252,7 +14225,7 @@ cirrhosis_survival_coxph_L1_25_L2_75_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_25_L2_75_shap_values = cirrhosis_survival_coxph_L1_25_L2_75_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:22,  5.26it/s]                         
+    PermutationExplainer explainer: 219it [00:22,  5.36it/s]                         
     
 
 
@@ -12267,7 +14240,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_25_L2_75_shap_values,
 
 
     
-![png](output_244_0.png)
+![png](output_249_0.png)
     
 
 
@@ -12563,7 +14536,7 @@ for container in ci_plot.containers:
 
 
     
-![png](output_249_0.png)
+![png](output_254_0.png)
     
 
 
