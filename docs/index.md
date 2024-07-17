@@ -7928,10 +7928,10 @@ plt.show()
 ##################################
 cirrhosis_survival_coxph_L1_0_L2_0.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
 train_predictions = cirrhosis_survival_coxph_L1_0_L2_0.predict_partial_hazard(cirrhosis_survival_train_modeling)
-cirrhosis_survival_coxph_L1_0_L2_0_train_ci_mean = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
+cirrhosis_survival_coxph_L1_0_L2_0_train_ci = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
                                                                      -train_predictions, 
                                                                      cirrhosis_survival_train_modeling['Status'])
-display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_0_L2_0_train_ci_mean}")
+display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_0_L2_0_train_ci}")
 ```
 
 
@@ -7973,14 +7973,82 @@ display(f"Cross-Validated Concordance Index: {cirrhosis_survival_coxph_L1_0_L2_0
 # on test data
 ##################################
 test_predictions = cirrhosis_survival_coxph_L1_0_L2_0.predict_partial_hazard(cirrhosis_survival_test_modeling)
-cirrhosis_survival_coxph_L1_0_L2_0_test_ci_mean = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
+cirrhosis_survival_coxph_L1_0_L2_0_test_ci = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
                                                                      -test_predictions, 
                                                                      cirrhosis_survival_test_modeling['Status'])
-display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_0_L2_0_test_ci_mean}")
+display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_0_L2_0_test_ci}")
 ```
 
 
     'Test Concordance Index: 0.8480725623582767'
+
+
+
+```python
+##################################
+# Gathering the concordance indices
+# from training, cross-validation and test
+##################################
+coxph_L1_0_L2_0_set = pd.DataFrame(["Train","Cross-Validation","Test"])
+coxph_L1_0_L2_0_ci_values = pd.DataFrame([cirrhosis_survival_coxph_L1_0_L2_0_train_ci,
+                                           cirrhosis_survival_coxph_L1_0_L2_0_cv_ci_mean,
+                                           cirrhosis_survival_coxph_L1_0_L2_0_test_ci])
+coxph_L1_0_L2_0_method = pd.DataFrame(["COXPH_NP"]*3)
+coxph_L1_0_L2_0_summary = pd.concat([coxph_L1_0_L2_0_set, 
+                                     coxph_L1_0_L2_0_ci_values,
+                                     coxph_L1_0_L2_0_method], 
+                                    axis=1)
+coxph_L1_0_L2_0_summary.columns = ['Set', 'Concordance.Index', 'Method']
+coxph_L1_0_L2_0_summary.reset_index(inplace=True, drop=True)
+display(coxph_L1_0_L2_0_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.847854</td>
+      <td>COXPH_NP</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.802364</td>
+      <td>COXPH_NP</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Test</td>
+      <td>0.848073</td>
+      <td>COXPH_NP</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
@@ -8008,7 +8076,7 @@ plt.show()
 
 
     
-![png](output_168_0.png)
+![png](output_169_0.png)
     
 
 
@@ -8241,7 +8309,7 @@ plt.show()
 
 
     
-![png](output_171_0.png)
+![png](output_172_0.png)
     
 
 
@@ -8255,7 +8323,7 @@ cirrhosis_survival_coxph_L1_0_L2_0_explainer = shap.Explainer(cirrhosis_survival
 cirrhosis_survival_coxph_L1_0_L2_0_shap_values = cirrhosis_survival_coxph_L1_0_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:18,  6.37it/s]                         
+    PermutationExplainer explainer: 219it [00:26,  6.38it/s]                         
     
 
 
@@ -8270,7 +8338,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_0_L2_0_shap_values,
 
 
     
-![png](output_173_0.png)
+![png](output_174_0.png)
     
 
 
@@ -8609,7 +8677,7 @@ plt.show()
 
 
     
-![png](output_176_0.png)
+![png](output_177_0.png)
     
 
 
@@ -8634,7 +8702,7 @@ plt.show()
 
 
     
-![png](output_177_0.png)
+![png](output_178_0.png)
     
 
 
@@ -8646,10 +8714,10 @@ plt.show()
 ##################################
 cirrhosis_survival_coxph_L1_100_L2_0.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
 train_predictions = cirrhosis_survival_coxph_L1_100_L2_0.predict_partial_hazard(cirrhosis_survival_train_modeling)
-cirrhosis_survival_coxph_L1_100_L2_0_train_ci_mean = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
+cirrhosis_survival_coxph_L1_100_L2_0_train_ci = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
                                                                      -train_predictions, 
                                                                      cirrhosis_survival_train_modeling['Status'])
-display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_100_L2_0_train_ci_mean}")
+display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_100_L2_0_train_ci}")
 ```
 
 
@@ -8691,14 +8759,82 @@ display(f"Cross-Validated Concordance Index: {cirrhosis_survival_coxph_L1_100_L2
 # on test data
 ##################################
 test_predictions = cirrhosis_survival_coxph_L1_100_L2_0.predict_partial_hazard(cirrhosis_survival_test_modeling)
-cirrhosis_survival_coxph_L1_100_L2_0_test_ci_mean = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
+cirrhosis_survival_coxph_L1_100_L2_0_test_ci = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
                                                                      -test_predictions, 
                                                                      cirrhosis_survival_test_modeling['Status'])
-display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_100_L2_0_test_ci_mean}")
+display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_100_L2_0_test_ci}")
 ```
 
 
     'Test Concordance Index: 0.8426303854875283'
+
+
+
+```python
+##################################
+# Gathering the concordance indices
+# from training, cross-validation and test
+##################################
+coxph_L1_100_L2_0_set = pd.DataFrame(["Train","Cross-Validation","Test"])
+coxph_L1_100_L2_0_ci_values = pd.DataFrame([cirrhosis_survival_coxph_L1_100_L2_0_train_ci,
+                                           cirrhosis_survival_coxph_L1_100_L2_0_cv_ci_mean,
+                                           cirrhosis_survival_coxph_L1_100_L2_0_test_ci])
+coxph_L1_100_L2_0_method = pd.DataFrame(["COXPH_FL1P"]*3)
+coxph_L1_100_L2_0_summary = pd.concat([coxph_L1_100_L2_0_set, 
+                                     coxph_L1_100_L2_0_ci_values,
+                                     coxph_L1_100_L2_0_method], 
+                                    axis=1)
+coxph_L1_100_L2_0_summary.columns = ['Set', 'Concordance.Index', 'Method']
+coxph_L1_100_L2_0_summary.reset_index(inplace=True, drop=True)
+display(coxph_L1_100_L2_0_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.831356</td>
+      <td>COXPH_FL1P</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.811197</td>
+      <td>COXPH_FL1P</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Test</td>
+      <td>0.842630</td>
+      <td>COXPH_FL1P</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
@@ -8726,7 +8862,7 @@ plt.show()
 
 
     
-![png](output_181_0.png)
+![png](output_183_0.png)
     
 
 
@@ -8959,7 +9095,7 @@ plt.show()
 
 
     
-![png](output_184_0.png)
+![png](output_186_0.png)
     
 
 
@@ -8973,7 +9109,7 @@ cirrhosis_survival_coxph_L1_100_L2_0_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_100_L2_0_shap_values = cirrhosis_survival_coxph_L1_100_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:14,  4.76it/s]                         
+    PermutationExplainer explainer: 219it [00:23,  5.37it/s]                         
     
 
 
@@ -8988,7 +9124,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_100_L2_0_shap_values,
 
 
     
-![png](output_186_0.png)
+![png](output_188_0.png)
     
 
 
@@ -9326,7 +9462,7 @@ plt.show()
 
 
     
-![png](output_189_0.png)
+![png](output_191_0.png)
     
 
 
@@ -9351,7 +9487,7 @@ plt.show()
 
 
     
-![png](output_190_0.png)
+![png](output_192_0.png)
     
 
 
@@ -9363,10 +9499,10 @@ plt.show()
 ##################################
 cirrhosis_survival_coxph_L1_0_L2_100.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
 train_predictions = cirrhosis_survival_coxph_L1_0_L2_100.predict_partial_hazard(cirrhosis_survival_train_modeling)
-cirrhosis_survival_coxph_L1_0_L2_100_train_ci_mean = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
+cirrhosis_survival_coxph_L1_0_L2_100_train_ci = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
                                                                      -train_predictions, 
                                                                      cirrhosis_survival_train_modeling['Status'])
-display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_0_L2_100_train_ci_mean}")
+display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_0_L2_100_train_ci}")
 ```
 
 
@@ -9408,14 +9544,82 @@ display(f"Cross-Validated Concordance Index: {cirrhosis_survival_coxph_L1_0_L2_1
 # on test data
 ##################################
 test_predictions = cirrhosis_survival_coxph_L1_0_L2_100.predict_partial_hazard(cirrhosis_survival_test_modeling)
-cirrhosis_survival_coxph_L1_0_L2_100_test_ci_mean = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
+cirrhosis_survival_coxph_L1_0_L2_100_test_ci = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
                                                                      -test_predictions, 
                                                                      cirrhosis_survival_test_modeling['Status'])
-display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_0_L2_100_test_ci_mean}")
+display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_0_L2_100_test_ci}")
 ```
 
 
     'Test Concordance Index: 0.8675736961451247'
+
+
+
+```python
+##################################
+# Gathering the concordance indices
+# from training, cross-validation and test
+##################################
+coxph_L1_0_L2_100_set = pd.DataFrame(["Train","Cross-Validation","Test"])
+coxph_L1_0_L2_100_ci_values = pd.DataFrame([cirrhosis_survival_coxph_L1_0_L2_100_train_ci,
+                                           cirrhosis_survival_coxph_L1_0_L2_100_cv_ci_mean,
+                                           cirrhosis_survival_coxph_L1_0_L2_100_test_ci])
+coxph_L1_0_L2_100_method = pd.DataFrame(["COXPH_FL2P"]*3)
+coxph_L1_0_L2_100_summary = pd.concat([coxph_L1_0_L2_100_set, 
+                                     coxph_L1_0_L2_100_ci_values,
+                                     coxph_L1_0_L2_100_method], 
+                                    axis=1)
+coxph_L1_0_L2_100_summary.columns = ['Set', 'Concordance.Index', 'Method']
+coxph_L1_0_L2_100_summary.reset_index(inplace=True, drop=True)
+display(coxph_L1_0_L2_100_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.853381</td>
+      <td>COXPH_FL2P</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.809983</td>
+      <td>COXPH_FL2P</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Test</td>
+      <td>0.867574</td>
+      <td>COXPH_FL2P</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
@@ -9443,7 +9647,7 @@ plt.show()
 
 
     
-![png](output_194_0.png)
+![png](output_197_0.png)
     
 
 
@@ -9676,7 +9880,7 @@ plt.show()
 
 
     
-![png](output_197_0.png)
+![png](output_200_0.png)
     
 
 
@@ -9690,7 +9894,7 @@ cirrhosis_survival_coxph_L1_0_L2_100_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_0_L2_100_shap_values = cirrhosis_survival_coxph_L1_0_L2_100_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:16,  4.81it/s]                         
+    PermutationExplainer explainer: 219it [00:20,  4.60it/s]                         
     
 
 
@@ -9705,7 +9909,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_0_L2_100_shap_values,
 
 
     
-![png](output_199_0.png)
+![png](output_202_0.png)
     
 
 
@@ -10044,7 +10248,7 @@ plt.show()
 
 
     
-![png](output_202_0.png)
+![png](output_205_0.png)
     
 
 
@@ -10069,7 +10273,7 @@ plt.show()
 
 
     
-![png](output_203_0.png)
+![png](output_206_0.png)
     
 
 
@@ -10081,10 +10285,10 @@ plt.show()
 ##################################
 cirrhosis_survival_coxph_L1_50_L2_50.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
 train_predictions = cirrhosis_survival_coxph_L1_50_L2_50.predict_partial_hazard(cirrhosis_survival_train_modeling)
-cirrhosis_survival_coxph_L1_50_L2_50_train_ci_mean = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
+cirrhosis_survival_coxph_L1_50_L2_50_train_ci = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
                                                                      -train_predictions, 
                                                                      cirrhosis_survival_train_modeling['Status'])
-display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_50_L2_50_train_ci_mean}")
+display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_50_L2_50_train_ci}")
 ```
 
 
@@ -10126,14 +10330,82 @@ display(f"Cross-Validated Concordance Index: {cirrhosis_survival_coxph_L1_50_L2_
 # on test data
 ##################################
 test_predictions = cirrhosis_survival_coxph_L1_50_L2_50.predict_partial_hazard(cirrhosis_survival_test_modeling)
-cirrhosis_survival_coxph_L1_50_L2_50_test_ci_mean = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
+cirrhosis_survival_coxph_L1_50_L2_50_test_ci = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
                                                                      -test_predictions, 
                                                                      cirrhosis_survival_test_modeling['Status'])
-display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_50_L2_50_test_ci_mean}")
+display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_50_L2_50_test_ci}")
 ```
 
 
     'Test Concordance Index: 0.8630385487528345'
+
+
+
+```python
+##################################
+# Gathering the concordance indices
+# from training, cross-validation and test
+##################################
+coxph_L1_50_L2_50_set = pd.DataFrame(["Train","Cross-Validation","Test"])
+coxph_L1_50_L2_50_ci_values = pd.DataFrame([cirrhosis_survival_coxph_L1_50_L2_50_train_ci,
+                                           cirrhosis_survival_coxph_L1_50_L2_50_cv_ci_mean,
+                                           cirrhosis_survival_coxph_L1_50_L2_50_test_ci])
+coxph_L1_50_L2_50_method = pd.DataFrame(["COXPH_EL1L2P"]*3)
+coxph_L1_50_L2_50_summary = pd.concat([coxph_L1_50_L2_50_set, 
+                                     coxph_L1_50_L2_50_ci_values,
+                                     coxph_L1_50_L2_50_method], 
+                                    axis=1)
+coxph_L1_50_L2_50_summary.columns = ['Set', 'Concordance.Index', 'Method']
+coxph_L1_50_L2_50_summary.reset_index(inplace=True, drop=True)
+display(coxph_L1_50_L2_50_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.846554</td>
+      <td>COXPH_EL1L2P</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.816280</td>
+      <td>COXPH_EL1L2P</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Test</td>
+      <td>0.863039</td>
+      <td>COXPH_EL1L2P</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
@@ -10161,7 +10433,7 @@ plt.show()
 
 
     
-![png](output_207_0.png)
+![png](output_211_0.png)
     
 
 
@@ -10394,7 +10666,7 @@ plt.show()
 
 
     
-![png](output_210_0.png)
+![png](output_214_0.png)
     
 
 
@@ -10408,7 +10680,7 @@ cirrhosis_survival_coxph_L1_50_L2_50_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_50_L2_50_shap_values = cirrhosis_survival_coxph_L1_50_L2_50_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:14,  4.22it/s]                         
+    PermutationExplainer explainer: 219it [00:21,  5.69it/s]                         
     
 
 
@@ -10423,7 +10695,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_50_L2_50_shap_values,
 
 
     
-![png](output_212_0.png)
+![png](output_216_0.png)
     
 
 
@@ -10762,7 +11034,7 @@ plt.show()
 
 
     
-![png](output_215_0.png)
+![png](output_219_0.png)
     
 
 
@@ -10787,7 +11059,7 @@ plt.show()
 
 
     
-![png](output_216_0.png)
+![png](output_220_0.png)
     
 
 
@@ -10799,10 +11071,10 @@ plt.show()
 ##################################
 cirrhosis_survival_coxph_L1_75_L2_25.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
 train_predictions = cirrhosis_survival_coxph_L1_75_L2_25.predict_partial_hazard(cirrhosis_survival_train_modeling)
-cirrhosis_survival_coxph_L1_75_L2_25_train_ci_mean = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
+cirrhosis_survival_coxph_L1_75_L2_25_train_ci = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
                                                                      -train_predictions, 
                                                                      cirrhosis_survival_train_modeling['Status'])
-display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_75_L2_25_train_ci_mean}")
+display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_75_L2_25_train_ci}")
 ```
 
 
@@ -10844,14 +11116,82 @@ display(f"Cross-Validated Concordance Index: {cirrhosis_survival_coxph_L1_75_L2_
 # on test data
 ##################################
 test_predictions = cirrhosis_survival_coxph_L1_75_L2_25.predict_partial_hazard(cirrhosis_survival_test_modeling)
-cirrhosis_survival_coxph_L1_75_L2_25_test_ci_mean = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
+cirrhosis_survival_coxph_L1_75_L2_25_test_ci = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
                                                                      -test_predictions, 
                                                                      cirrhosis_survival_test_modeling['Status'])
-display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_75_L2_25_test_ci_mean}")
+display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_75_L2_25_test_ci}")
 ```
 
 
     'Test Concordance Index: 0.8526077097505669'
+
+
+
+```python
+##################################
+# Gathering the concordance indices
+# from training, cross-validation and test
+##################################
+coxph_L1_75_L2_25_set = pd.DataFrame(["Train","Cross-Validation","Test"])
+coxph_L1_75_L2_25_ci_values = pd.DataFrame([cirrhosis_survival_coxph_L1_75_L2_25_train_ci,
+                                           cirrhosis_survival_coxph_L1_75_L2_25_cv_ci_mean,
+                                           cirrhosis_survival_coxph_L1_75_L2_25_test_ci])
+coxph_L1_75_L2_25_method = pd.DataFrame(["COXPH_PWL1L2P"]*3)
+coxph_L1_75_L2_25_summary = pd.concat([coxph_L1_75_L2_25_set, 
+                                     coxph_L1_75_L2_25_ci_values,
+                                     coxph_L1_75_L2_25_method], 
+                                    axis=1)
+coxph_L1_75_L2_25_summary.columns = ['Set', 'Concordance.Index', 'Method']
+coxph_L1_75_L2_25_summary.reset_index(inplace=True, drop=True)
+display(coxph_L1_75_L2_25_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.839402</td>
+      <td>COXPH_PWL1L2P</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.810178</td>
+      <td>COXPH_PWL1L2P</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Test</td>
+      <td>0.852608</td>
+      <td>COXPH_PWL1L2P</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
@@ -10879,7 +11219,7 @@ plt.show()
 
 
     
-![png](output_220_0.png)
+![png](output_225_0.png)
     
 
 
@@ -11112,7 +11452,7 @@ plt.show()
 
 
     
-![png](output_223_0.png)
+![png](output_228_0.png)
     
 
 
@@ -11126,7 +11466,7 @@ cirrhosis_survival_coxph_L1_75_L2_25_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_75_L2_25_shap_values = cirrhosis_survival_coxph_L1_75_L2_25_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:14,  4.07it/s]                         
+    PermutationExplainer explainer: 219it [00:16,  4.92it/s]                         
     
 
 
@@ -11141,7 +11481,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_75_L2_25_shap_values,
 
 
     
-![png](output_225_0.png)
+![png](output_230_0.png)
     
 
 
@@ -11480,7 +11820,7 @@ plt.show()
 
 
     
-![png](output_228_0.png)
+![png](output_233_0.png)
     
 
 
@@ -11505,7 +11845,7 @@ plt.show()
 
 
     
-![png](output_229_0.png)
+![png](output_234_0.png)
     
 
 
@@ -11517,10 +11857,10 @@ plt.show()
 ##################################
 cirrhosis_survival_coxph_L1_25_L2_75.fit(cirrhosis_survival_train_modeling, duration_col='N_Days', event_col='Status')
 train_predictions = cirrhosis_survival_coxph_L1_25_L2_75.predict_partial_hazard(cirrhosis_survival_train_modeling)
-cirrhosis_survival_coxph_L1_25_L2_75_train_ci_mean = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
+cirrhosis_survival_coxph_L1_25_L2_75_train_ci = concordance_index(cirrhosis_survival_train_modeling['N_Days'], 
                                                                      -train_predictions, 
                                                                      cirrhosis_survival_train_modeling['Status'])
-display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_25_L2_75_train_ci_mean}")
+display(f"Apparent Concordance Index: {cirrhosis_survival_coxph_L1_25_L2_75_train_ci}")
 ```
 
 
@@ -11540,19 +11880,19 @@ for train_index, val_index in kf.split(cirrhosis_survival_train_modeling):
     df_train_fold = cirrhosis_survival_train_modeling.iloc[train_index]
     df_val_fold = cirrhosis_survival_train_modeling.iloc[val_index]
     
-    cirrhosis_survival_coxph_L1_75_L2_25.fit(df_train_fold, duration_col='N_Days', event_col='Status')
-    val_predictions = cirrhosis_survival_coxph_L1_75_L2_25.predict_partial_hazard(df_val_fold)
+    cirrhosis_survival_coxph_L1_25_L2_75.fit(df_train_fold, duration_col='N_Days', event_col='Status')
+    val_predictions = cirrhosis_survival_coxph_L1_25_L2_75.predict_partial_hazard(df_val_fold)
     c_index = concordance_index(df_val_fold['N_Days'], -val_predictions, df_val_fold['Status'])
     c_index_scores.append(c_index)
 
-cirrhosis_survival_coxph_L1_75_L2_25_cv_ci_mean = np.mean(c_index_scores)
-cirrhosis_survival_coxph_L1_75_L2_25_cv_ci_std = np.std(c_index_scores)
+cirrhosis_survival_coxph_L1_25_L2_75_cv_ci_mean = np.mean(c_index_scores)
+cirrhosis_survival_coxph_L1_25_L2_75_cv_ci_std = np.std(c_index_scores)
 
-display(f"Cross-Validated Concordance Index: {cirrhosis_survival_coxph_L1_75_L2_25_cv_ci_mean}")
+display(f"Cross-Validated Concordance Index: {cirrhosis_survival_coxph_L1_25_L2_75_cv_ci_mean}")
 ```
 
 
-    'Cross-Validated Concordance Index: 0.810177644183905'
+    'Cross-Validated Concordance Index: 0.8152592390610126'
 
 
 
@@ -11561,15 +11901,83 @@ display(f"Cross-Validated Concordance Index: {cirrhosis_survival_coxph_L1_75_L2_
 # Evaluating the model performance
 # on test data
 ##################################
-test_predictions = cirrhosis_survival_coxph_L1_75_L2_25.predict_partial_hazard(cirrhosis_survival_test_modeling)
-cirrhosis_survival_coxph_L1_75_L2_25_test_ci_mean = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
+test_predictions = cirrhosis_survival_coxph_L1_25_L2_75.predict_partial_hazard(cirrhosis_survival_test_modeling)
+cirrhosis_survival_coxph_L1_25_L2_75_test_ci = concordance_index(cirrhosis_survival_test_modeling['N_Days'], 
                                                                      -test_predictions, 
                                                                      cirrhosis_survival_test_modeling['Status'])
-display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_75_L2_25_test_ci_mean}")
+display(f"Test Concordance Index: {cirrhosis_survival_coxph_L1_25_L2_75_test_ci}")
 ```
 
 
-    'Test Concordance Index: 0.8526077097505669'
+    'Test Concordance Index: 0.8671201814058956'
+
+
+
+```python
+##################################
+# Gathering the concordance indices
+# from training, cross-validation and test
+##################################
+coxph_L1_25_L2_75_set = pd.DataFrame(["Train","Cross-Validation","Test"])
+coxph_L1_25_L2_75_ci_values = pd.DataFrame([cirrhosis_survival_coxph_L1_25_L2_75_train_ci,
+                                           cirrhosis_survival_coxph_L1_25_L2_75_cv_ci_mean,
+                                           cirrhosis_survival_coxph_L1_25_L2_75_test_ci])
+coxph_L1_25_L2_75_method = pd.DataFrame(["COXPH_PWL2L1P"]*3)
+coxph_L1_25_L2_75_summary = pd.concat([coxph_L1_25_L2_75_set, 
+                                     coxph_L1_25_L2_75_ci_values,
+                                     coxph_L1_25_L2_75_method], 
+                                    axis=1)
+coxph_L1_25_L2_75_summary.columns = ['Set', 'Concordance.Index', 'Method']
+coxph_L1_25_L2_75_summary.reset_index(inplace=True, drop=True)
+display(coxph_L1_25_L2_75_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.850130</td>
+      <td>COXPH_PWL2L1P</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.815259</td>
+      <td>COXPH_PWL2L1P</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Test</td>
+      <td>0.867120</td>
+      <td>COXPH_PWL2L1P</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
@@ -11597,7 +12005,7 @@ plt.show()
 
 
     
-![png](output_233_0.png)
+![png](output_239_0.png)
     
 
 
@@ -11675,7 +12083,7 @@ display(test_case_details)
       <td>High-Risk</td>
       <td>3.761430</td>
       <td>High-Risk</td>
-      <td>3.761430</td>
+      <td>4.348925</td>
       <td>High-Risk</td>
     </tr>
     <tr>
@@ -11699,7 +12107,7 @@ display(test_case_details)
       <td>Low-Risk</td>
       <td>0.747044</td>
       <td>Low-Risk</td>
-      <td>0.747044</td>
+      <td>0.694654</td>
       <td>Low-Risk</td>
     </tr>
     <tr>
@@ -11723,7 +12131,7 @@ display(test_case_details)
       <td>Low-Risk</td>
       <td>0.295159</td>
       <td>Low-Risk</td>
-      <td>0.295159</td>
+      <td>0.202767</td>
       <td>Low-Risk</td>
     </tr>
     <tr>
@@ -11747,7 +12155,7 @@ display(test_case_details)
       <td>High-Risk</td>
       <td>1.214395</td>
       <td>High-Risk</td>
-      <td>1.214395</td>
+      <td>1.404015</td>
       <td>High-Risk</td>
     </tr>
     <tr>
@@ -11771,7 +12179,7 @@ display(test_case_details)
       <td>High-Risk</td>
       <td>1.832724</td>
       <td>High-Risk</td>
-      <td>1.832724</td>
+      <td>2.288206</td>
       <td>High-Risk</td>
     </tr>
   </tbody>
@@ -11809,7 +12217,7 @@ test_case_labels = ['Patient_10','Patient_20','Patient_30','Patient_40','Patient
 
 fig, axes = plt.subplots(1, 2, figsize=(17, 8))
 for i, (index, row) in enumerate(test_case.iterrows()):
-    survival_function = cirrhosis_survival_coxph_L1_75_L2_25.predict_survival_function(row.to_frame().T)
+    survival_function = cirrhosis_survival_coxph_L1_25_L2_75.predict_survival_function(row.to_frame().T)
     axes[0].plot(survival_function, label=f'Sample {i+1}')
 axes[0].set_title('COXPH_PWL2L1P Survival Function for 5 Test Cases')
 axes[0].set_xlabel('N_Days')
@@ -11817,7 +12225,7 @@ axes[0].set_ylim(0,1)
 axes[0].set_ylabel('Survival Probability')
 axes[0].legend(test_case_labels, loc="lower left")
 for i, (index, row) in enumerate(test_case.iterrows()):
-    hazard_function = cirrhosis_survival_coxph_L1_75_L2_25.predict_cumulative_hazard(row.to_frame().T)
+    hazard_function = cirrhosis_survival_coxph_L1_25_L2_75.predict_cumulative_hazard(row.to_frame().T)
     axes[1].plot(hazard_function, label=f'Sample {i+1}')
 axes[1].set_title('COXPH_PWL2L1P Cumulative Hazard for 5 Test Cases')
 axes[1].set_xlabel('N_Days')
@@ -11830,7 +12238,7 @@ plt.show()
 
 
     
-![png](output_236_0.png)
+![png](output_242_0.png)
     
 
 
@@ -11839,12 +12247,12 @@ plt.show()
 ##################################
 # Creating the explainer object
 ##################################
-cirrhosis_survival_coxph_L1_75_L2_25_explainer = shap.Explainer(cirrhosis_survival_coxph_L1_75_L2_25.predict_partial_hazard, 
+cirrhosis_survival_coxph_L1_25_L2_75_explainer = shap.Explainer(cirrhosis_survival_coxph_L1_25_L2_75.predict_partial_hazard, 
                                                     cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
-cirrhosis_survival_coxph_L1_75_L2_25_shap_values = cirrhosis_survival_coxph_L1_75_L2_25_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
+cirrhosis_survival_coxph_L1_25_L2_75_shap_values = cirrhosis_survival_coxph_L1_25_L2_75_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:15,  5.19it/s]                         
+    PermutationExplainer explainer: 219it [00:19,  3.92it/s]                         
     
 
 
@@ -11852,14 +12260,14 @@ cirrhosis_survival_coxph_L1_75_L2_25_shap_values = cirrhosis_survival_coxph_L1_7
 ##################################
 # Plotting the SHAP summary plot
 ##################################
-shap.summary_plot(cirrhosis_survival_coxph_L1_75_L2_25_shap_values, 
+shap.summary_plot(cirrhosis_survival_coxph_L1_25_L2_75_shap_values, 
                   cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]),
                   sort=False)
 ```
 
 
     
-![png](output_238_0.png)
+![png](output_244_0.png)
     
 
 
