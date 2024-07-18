@@ -2,7 +2,7 @@
 # Supervised Learning : Implementing Shapley Additive Explanations for Interpreting Feature Contributions in Penalized Cox Regression
 
 ***
-### John Pauline Pineda <br> <br> *July 28, 2024*
+### John Pauline Pineda <br> <br> *July 18, 2024*
 ***
 
 * [**1. Table of Contents**](#TOC)
@@ -7951,6 +7951,21 @@ plt.show()
 
 ```python
 ##################################
+# Determining the number of
+# selected and significant predictors
+##################################
+coxph_L1_0_L2_0_selected = sum((cirrhosis_survival_coxph_L1_0_L2_0_summary['coef']>0.001) | (-cirrhosis_survival_coxph_L1_0_L2_0_summary['coef']>0.001))
+coxph_L1_0_L2_0_significant = sum(cirrhosis_survival_coxph_L1_0_L2_0_summary['p'] < 0.05)
+display(f"Number of Selected Predictors: {coxph_L1_0_L2_0_selected}, Number of Significant Predictors: {coxph_L1_0_L2_0_significant}")
+```
+
+
+    'Number of Selected Predictors: 17, Number of Significant Predictors: 3'
+
+
+
+```python
+##################################
 # Gathering the apparent model performance
 # as baseline for evaluating overfitting
 ##################################
@@ -8104,7 +8119,7 @@ plt.show()
 
 
     
-![png](output_169_0.png)
+![png](output_170_0.png)
     
 
 
@@ -8337,7 +8352,7 @@ plt.show()
 
 
     
-![png](output_172_0.png)
+![png](output_173_0.png)
     
 
 
@@ -8351,7 +8366,7 @@ cirrhosis_survival_coxph_L1_0_L2_0_explainer = shap.Explainer(cirrhosis_survival
 cirrhosis_survival_coxph_L1_0_L2_0_shap_values = cirrhosis_survival_coxph_L1_0_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:30,  5.67it/s]                         
+    PermutationExplainer explainer: 219it [00:18,  6.92it/s]                         
     
 
 
@@ -8366,7 +8381,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_0_L2_0_shap_values,
 
 
     
-![png](output_174_0.png)
+![png](output_175_0.png)
     
 
 
@@ -8466,7 +8481,7 @@ cirrhosis_survival_coxph_L1_100_L2_0.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-17 11:42:08 UTC</td>
+      <td>2024-07-18 04:31:51 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -9093,7 +9108,7 @@ plt.show()
 
 
     
-![png](output_178_0.png)
+![png](output_179_0.png)
     
 
 
@@ -9118,8 +9133,23 @@ plt.show()
 
 
     
-![png](output_179_0.png)
+![png](output_180_0.png)
     
+
+
+
+```python
+##################################
+# Determining the number of
+# selected and significant predictors
+##################################
+coxph_L1_100_L2_0_selected = sum((cirrhosis_survival_coxph_L1_100_L2_0_summary['coef']>0.001) | (-cirrhosis_survival_coxph_L1_100_L2_0_summary['coef']>0.001))
+coxph_L1_100_L2_0_significant = sum(cirrhosis_survival_coxph_L1_100_L2_0_summary['p'] < 0.05)
+display(f"Number of Selected Predictors: {coxph_L1_100_L2_0_selected}, Number of Significant Predictors: {coxph_L1_100_L2_0_significant}")
+```
+
+
+    'Number of Selected Predictors: 8, Number of Significant Predictors: 1'
 
 
 
@@ -9278,7 +9308,7 @@ plt.show()
 
 
     
-![png](output_184_0.png)
+![png](output_186_0.png)
     
 
 
@@ -9511,7 +9541,7 @@ plt.show()
 
 
     
-![png](output_187_0.png)
+![png](output_189_0.png)
     
 
 
@@ -9525,7 +9555,7 @@ cirrhosis_survival_coxph_L1_100_L2_0_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_100_L2_0_shap_values = cirrhosis_survival_coxph_L1_100_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:22,  5.36it/s]                         
+    PermutationExplainer explainer: 219it [00:12,  3.66it/s]                         
     
 
 
@@ -9540,7 +9570,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_100_L2_0_shap_values,
 
 
     
-![png](output_189_0.png)
+![png](output_191_0.png)
     
 
 
@@ -9641,7 +9671,7 @@ cirrhosis_survival_coxph_L1_0_L2_100.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-17 11:42:37 UTC</td>
+      <td>2024-07-18 04:32:09 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -10268,7 +10298,7 @@ plt.show()
 
 
     
-![png](output_193_0.png)
+![png](output_195_0.png)
     
 
 
@@ -10293,8 +10323,23 @@ plt.show()
 
 
     
-![png](output_194_0.png)
+![png](output_196_0.png)
     
+
+
+
+```python
+##################################
+# Determining the number of
+# selected and significant predictors
+##################################
+coxph_L1_0_L2_100_selected = sum((cirrhosis_survival_coxph_L1_0_L2_100_summary['coef']>0.001) | (-cirrhosis_survival_coxph_L1_0_L2_100_summary['coef']>0.001))
+coxph_L1_0_L2_100_significant = sum(cirrhosis_survival_coxph_L1_0_L2_100_summary['p'] < 0.05)
+display(f"Number of Selected Predictors: {coxph_L1_0_L2_100_selected}, Number of Significant Predictors: {coxph_L1_0_L2_100_significant}")
+```
+
+
+    'Number of Selected Predictors: 17, Number of Significant Predictors: 3'
 
 
 
@@ -10453,7 +10498,7 @@ plt.show()
 
 
     
-![png](output_199_0.png)
+![png](output_202_0.png)
     
 
 
@@ -10686,7 +10731,7 @@ plt.show()
 
 
     
-![png](output_202_0.png)
+![png](output_205_0.png)
     
 
 
@@ -10700,7 +10745,7 @@ cirrhosis_survival_coxph_L1_0_L2_100_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_0_L2_100_shap_values = cirrhosis_survival_coxph_L1_0_L2_100_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:21,  5.38it/s]                         
+    PermutationExplainer explainer: 219it [00:15,  4.79it/s]                         
     
 
 
@@ -10715,7 +10760,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_0_L2_100_shap_values,
 
 
     
-![png](output_204_0.png)
+![png](output_207_0.png)
     
 
 
@@ -10816,7 +10861,7 @@ cirrhosis_survival_coxph_L1_50_L2_50.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-17 11:43:03 UTC</td>
+      <td>2024-07-18 04:32:27 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -11443,7 +11488,7 @@ plt.show()
 
 
     
-![png](output_208_0.png)
+![png](output_211_0.png)
     
 
 
@@ -11468,8 +11513,23 @@ plt.show()
 
 
     
-![png](output_209_0.png)
+![png](output_212_0.png)
     
+
+
+
+```python
+##################################
+# Determining the number of
+# selected and significant predictors
+##################################
+coxph_L1_50_L2_50_selected = sum((cirrhosis_survival_coxph_L1_50_L2_50_summary['coef']>0.001) | (-cirrhosis_survival_coxph_L1_50_L2_50_summary['coef']>0.001))
+coxph_L1_50_L2_50_significant = sum(cirrhosis_survival_coxph_L1_50_L2_50_summary['p'] < 0.05)
+display(f"Number of Selected Predictors: {coxph_L1_50_L2_50_selected}, Number of Significant Predictors: {coxph_L1_50_L2_50_significant}")
+```
+
+
+    'Number of Selected Predictors: 10, Number of Significant Predictors: 2'
 
 
 
@@ -11628,7 +11688,7 @@ plt.show()
 
 
     
-![png](output_214_0.png)
+![png](output_218_0.png)
     
 
 
@@ -11861,7 +11921,7 @@ plt.show()
 
 
     
-![png](output_217_0.png)
+![png](output_221_0.png)
     
 
 
@@ -11875,7 +11935,7 @@ cirrhosis_survival_coxph_L1_50_L2_50_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_50_L2_50_shap_values = cirrhosis_survival_coxph_L1_50_L2_50_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:22,  5.35it/s]                         
+    PermutationExplainer explainer: 219it [00:15,  5.21it/s]                         
     
 
 
@@ -11890,7 +11950,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_50_L2_50_shap_values,
 
 
     
-![png](output_219_0.png)
+![png](output_223_0.png)
     
 
 
@@ -11990,7 +12050,7 @@ cirrhosis_survival_coxph_L1_75_L2_25.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-17 11:43:32 UTC</td>
+      <td>2024-07-18 04:32:48 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -12617,7 +12677,7 @@ plt.show()
 
 
     
-![png](output_223_0.png)
+![png](output_227_0.png)
     
 
 
@@ -12642,8 +12702,23 @@ plt.show()
 
 
     
-![png](output_224_0.png)
+![png](output_228_0.png)
     
+
+
+
+```python
+##################################
+# Determining the number of
+# selected and significant predictors
+##################################
+coxph_L1_75_L2_25_selected = sum((cirrhosis_survival_coxph_L1_75_L2_25_summary['coef']>0.001) | (-cirrhosis_survival_coxph_L1_75_L2_25_summary['coef']>0.001))
+coxph_L1_75_L2_25_significant = sum(cirrhosis_survival_coxph_L1_75_L2_25_summary['p'] < 0.05)
+display(f"Number of Selected Predictors: {coxph_L1_75_L2_25_selected}, Number of Significant Predictors: {coxph_L1_75_L2_25_significant}")
+```
+
+
+    'Number of Selected Predictors: 8, Number of Significant Predictors: 1'
 
 
 
@@ -12802,7 +12877,7 @@ plt.show()
 
 
     
-![png](output_229_0.png)
+![png](output_234_0.png)
     
 
 
@@ -13035,7 +13110,7 @@ plt.show()
 
 
     
-![png](output_232_0.png)
+![png](output_237_0.png)
     
 
 
@@ -13049,7 +13124,7 @@ cirrhosis_survival_coxph_L1_75_L2_25_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_75_L2_25_shap_values = cirrhosis_survival_coxph_L1_75_L2_25_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:22,  5.43it/s]                         
+    PermutationExplainer explainer: 219it [00:12,  3.47it/s]                         
     
 
 
@@ -13064,7 +13139,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_75_L2_25_shap_values,
 
 
     
-![png](output_234_0.png)
+![png](output_239_0.png)
     
 
 
@@ -13085,7 +13160,7 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_75_L2_25_shap_values,
     * <span style="color: #FF0000">penalizer</span> = penalty to the size of the coefficients during regression fixed at a value = 0.10
     * <span style="color: #FF0000">l1_ratio</span> = proportion of the L1 versus L2 penalty fixed at a value = 0.25
 3. Only 12 out of the 17 variables were used for prediction given the non-zero values of the model coefficients.
-4. Out of all 12 predictors, only 2 variables were statistically significant:
+4. Out of all 12 predictors, only 3 variables were statistically significant:
     * <span style="color: #FF0000">Age</span>
     * <span style="color: #FF0000">Bilirubin</span>
     * <span style="color: #FF0000">Prothrombin</span>
@@ -13166,7 +13241,7 @@ cirrhosis_survival_coxph_L1_25_L2_75.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-17 11:44:02 UTC</td>
+      <td>2024-07-18 04:33:07 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -13793,7 +13868,7 @@ plt.show()
 
 
     
-![png](output_238_0.png)
+![png](output_243_0.png)
     
 
 
@@ -13818,8 +13893,23 @@ plt.show()
 
 
     
-![png](output_239_0.png)
+![png](output_244_0.png)
     
+
+
+
+```python
+##################################
+# Determining the number of
+# selected and significant predictors
+##################################
+coxph_L1_25_L2_75_selected = sum((cirrhosis_survival_coxph_L1_25_L2_75_summary['coef']>0.001) | (-cirrhosis_survival_coxph_L1_25_L2_75_summary['coef']>0.001))
+coxph_L1_25_L2_75_significant = sum(cirrhosis_survival_coxph_L1_25_L2_75_summary['p'] < 0.05)
+display(f"Number of Selected Predictors: {coxph_L1_25_L2_75_selected}, Number of Significant Predictors: {coxph_L1_25_L2_75_significant}")
+```
+
+
+    'Number of Selected Predictors: 12, Number of Significant Predictors: 3'
 
 
 
@@ -13978,7 +14068,7 @@ plt.show()
 
 
     
-![png](output_244_0.png)
+![png](output_250_0.png)
     
 
 
@@ -14211,7 +14301,7 @@ plt.show()
 
 
     
-![png](output_247_0.png)
+![png](output_253_0.png)
     
 
 
@@ -14225,7 +14315,7 @@ cirrhosis_survival_coxph_L1_25_L2_75_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_25_L2_75_shap_values = cirrhosis_survival_coxph_L1_25_L2_75_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:22,  5.36it/s]                         
+    PermutationExplainer explainer: 219it [00:14,  5.00it/s]                         
     
 
 
@@ -14240,13 +14330,30 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_25_L2_75_shap_values,
 
 
     
-![png](output_249_0.png)
+![png](output_255_0.png)
     
 
 
 ## 1.7. Consolidated Findings <a class="anchor" id="1.7"></a>
 
+1. In the context of Cox proportional hazards regression, penalties are used to prevent overfitting and improve the generalizability of the model by adding a constraint to the optimization problem. These penalties can help improve the model's predictive performance and interpretability by addressing overfitting and multicollinearity issues.
 
+1. The choice of penalty will depend on a number of factors including interpretability, multicpllinearity handling and variable selection capabilities.
+    * [No penalty](https://lifelines.readthedocs.io/en/latest/) (no regularization) can lead to overfitting, especially when the number of predictors is large or when there is multicollinearity among the predictors.
+    * [Lasso penalty](https://lifelines.readthedocs.io/en/latest/) (L1 regularization) encourages sparsity in the coefficients by setting some coefficients exactly to zero, effectively performing variable selection.
+    * [Rdige penalty](https://lifelines.readthedocs.io/en/latest/) (L2 regularization) shrinks the coefficients towards zero but does not set them exactly to zero, which can be beneficial in dealing with multicollinearity among predictors. 
+    * [Elastic net penalty](https://lifelines.readthedocs.io/en/latest/) (L1 and L2 regularization) combines the benefits of both Lasso and Ridge penalties, promoting sparsity while also dealing with multicollinearity.
+2. Comparing all results from the penalized conx regression models formulated, the viable models for prediction can be any of the following:
+    * [Elastic net penalty](https://lifelines.readthedocs.io/en/latest/) (with more weight assigned to L2 than L1 regularization)
+        * Demonstrated the best independent cross-validated (**Concordance Index** = 0.8152) and test (**Concordance Index** = 0.8671) model performance 
+        * Showed considerable overfit between the train (**Concordance Index** = 0.8501) and cross-validated (**Concordance Index** = 0.8152) model performance
+        * Selected a sufficient number of predictors (12 out of 17)
+        * Identified a sufficient number of statistically significant predictors (3 out of 12)
+            * <span style="color: #FF0000">Age</span>
+            * <span style="color: #FF0000">Bilirubin</span>
+            * <span style="color: #FF0000">Prothrombin</span>
+        * Demonstrated good survival profile differentiation between the risk groups
+        * Allows for the estimation of permutation-based variable importance which might aid in better interpretation
 
 
 ```python
@@ -14536,7 +14643,98 @@ for container in ci_plot.containers:
 
 
     
-![png](output_254_0.png)
+![png](output_260_0.png)
+    
+
+
+
+```python
+##################################
+# Plotting the values for the
+# number of selected and significant predictors
+# for all models
+##################################
+predictor_plot = pd.DataFrame({'COXPH_NP': list([coxph_L1_0_L2_0_selected, coxph_L1_0_L2_0_significant]),
+                               'COXPH_FL1P': list([coxph_L1_100_L2_0_selected, coxph_L1_100_L2_0_significant]),
+                               'COXPH_FL2P': list([coxph_L1_0_L2_100_selected, coxph_L1_0_L2_100_significant]),
+                               'COXPH_EL1L2P': list([coxph_L1_50_L2_50_selected, coxph_L1_50_L2_50_significant]),
+                               'COXPH_PWL1L2P': list([coxph_L1_75_L2_25_selected, coxph_L1_75_L2_25_significant]),
+                               'COXPH_PWL2L1P': list([coxph_L1_25_L2_75_selected, coxph_L1_25_L2_75_significant])},
+                              index = ['Selected','Significant'])
+display(predictor_plot)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>COXPH_NP</th>
+      <th>COXPH_FL1P</th>
+      <th>COXPH_FL2P</th>
+      <th>COXPH_EL1L2P</th>
+      <th>COXPH_PWL1L2P</th>
+      <th>COXPH_PWL2L1P</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Selected</th>
+      <td>17</td>
+      <td>8</td>
+      <td>17</td>
+      <td>10</td>
+      <td>8</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>Significant</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>2</td>
+      <td>1</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Plotting all the predictor counts
+# for all models
+##################################
+predictor_plot = predictor_plot.plot.barh(figsize=(10, 6), width=0.90)
+predictor_plot.set_xlim(0.00,20.00)
+predictor_plot.set_title("Model Comparison by Selected and Significant Predictor Count")
+predictor_plot.set_xlabel("Count")
+predictor_plot.set_ylabel("Predictor")
+predictor_plot.grid(False)
+predictor_plot.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+for container in predictor_plot.containers:
+    predictor_plot.bar_label(container, fmt='%.0f', padding=-20, color='white', fontweight='bold')
+```
+
+
+    
+![png](output_262_0.png)
     
 
 
