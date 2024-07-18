@@ -2,7 +2,7 @@
 # Supervised Learning : Implementing Shapley Additive Explanations for Interpreting Feature Contributions in Penalized Cox Regression
 
 ***
-### John Pauline Pineda <br> <br> *July 18, 2024*
+### John Pauline Pineda <br> <br> *July 19, 2024*
 ***
 
 * [**1. Table of Contents**](#TOC)
@@ -37,7 +37,7 @@
 
 # 1. Table of Contents <a class="anchor" id="TOC"></a>
 
-This project implements the **Cox Proportional Hazards Regression** algorithm with **No Penalty**, **Full L1 Penalty**, **Full L2 Penalty**, **Equal L1|L2 Penalty** and **Weighted L1|L2 Penalty** using various helpful packages in <mark style="background-color: #CCECFF"><b>Python</b></mark> to estimate the survival probabilities of right-censored survival time and status responses. The resulting predictions derived from the candidate models were evaluated in terms of their discrimination power using the Harrel's concordance index metric. Additionally, feature contributions were estimated using **Shapley Additive Explanations**. All results were consolidated in a [<span style="color: #FF0000"><b>Summary</b></span>](#Summary) presented at the end of the document. 
+This project implements the **Cox Proportional Hazards Regression** algorithm with **No Penalty**, **Full L1 Penalty**, **Full L2 Penalty**, **Equal L1|L2 Penalties** and **Weighted L1|L2 Penalties** using various helpful packages in <mark style="background-color: #CCECFF"><b>Python</b></mark> to estimate the survival probabilities of right-censored survival time and status responses. The resulting predictions derived from the candidate models were evaluated in terms of their discrimination power using the Harrel's concordance index metric. Additionally, feature impact on model output were estimated using **Shapley Additive Explanations**. All results were consolidated in a [<span style="color: #FF0000"><b>Summary</b></span>](#Summary) presented at the end of the document. 
 
 [Survival Analysis](https://link.springer.com/book/10.1007/978-1-4419-6646-9/) deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.
 
@@ -7153,13 +7153,17 @@ display(cirrhosis_survival_binned_numeric_lrtest_summary.sort_values(by=['LR.Tes
 
 ### 1.6.1 Premodelling Data Description <a class="anchor" id="1.6.1"></a>
 
-1. To evaluate the feature selection capabilities of the candidate models, all predictors were accounted during the model development process using the training subset:
+1. To improve interpretation, reduce dimensionality and avoid inducing design matrix singularity, 3 object predictors were dropped prior to modelling:
+    * <span style="color: #FF0000">Stage_1.0</span>
+    * <span style="color: #FF0000">Stage_2.0</span>
+    * <span style="color: #FF0000">Stage_3.0</span>
+2. To evaluate the feature selection capabilities of the candidate models, all remaining predictors were accounted during the model development process using the training subset:
     * **218 rows** (observations)
-    * **22 columns** (variables)
-        * **2/22 event | duration** (boolean | numeric)
+    * **19 columns** (variables)
+        * **2/19 event | duration** (boolean | numeric)
              * <span style="color: #FF0000">Status</span>
              * <span style="color: #FF0000">N_Days</span>
-        * **10/22 predictor** (numeric)
+        * **10/19 predictor** (numeric)
              * <span style="color: #FF0000">Age</span>
              * <span style="color: #FF0000">Bilirubin</span>
              * <span style="color: #FF0000">Cholesterol</span>
@@ -7170,24 +7174,21 @@ display(cirrhosis_survival_binned_numeric_lrtest_summary.sort_values(by=['LR.Tes
              * <span style="color: #FF0000">Triglycerides</span>
              * <span style="color: #FF0000">Platelets</span>
              * <span style="color: #FF0000">Prothrombin</span>
-        * **10/21 predictor** (object)
+        * **7/19 predictor** (object)
              * <span style="color: #FF0000">Drug</span>
              * <span style="color: #FF0000">Sex</span>
              * <span style="color: #FF0000">Ascites</span>
              * <span style="color: #FF0000">Hepatomegaly</span>
              * <span style="color: #FF0000">Spiders</span>
              * <span style="color: #FF0000">Edema</span>
-             * <span style="color: #FF0000">Stage_1.0</span>
-             * <span style="color: #FF0000">Stage_2.0</span>
-             * <span style="color: #FF0000">Stage_3.0</span>
              * <span style="color: #FF0000">Stage_4.0</span>
-2. Similarly, all predictors were accounted during the model evaluation process using the testing subset:
+3. Similarly, all remaining predictors were accounted during the model evaluation process using the testing subset:
     * **94 rows** (observations)
-    * **22 columns** (variables)
-        * **2/22 event | duration** (boolean | numeric)
+    * **19 columns** (variables)
+        * **2/19 event | duration** (boolean | numeric)
              * <span style="color: #FF0000">Status</span>
              * <span style="color: #FF0000">N_Days</span>
-        * **10/22 predictor** (numeric)
+        * **10/19 predictor** (numeric)
              * <span style="color: #FF0000">Age</span>
              * <span style="color: #FF0000">Bilirubin</span>
              * <span style="color: #FF0000">Cholesterol</span>
@@ -7198,16 +7199,13 @@ display(cirrhosis_survival_binned_numeric_lrtest_summary.sort_values(by=['LR.Tes
              * <span style="color: #FF0000">Triglycerides</span>
              * <span style="color: #FF0000">Platelets</span>
              * <span style="color: #FF0000">Prothrombin</span>
-        * **10/21 predictor** (object)
+        * **7/19 predictor** (object)
              * <span style="color: #FF0000">Drug</span>
              * <span style="color: #FF0000">Sex</span>
              * <span style="color: #FF0000">Ascites</span>
              * <span style="color: #FF0000">Hepatomegaly</span>
              * <span style="color: #FF0000">Spiders</span>
              * <span style="color: #FF0000">Edema</span>
-             * <span style="color: #FF0000">Stage_1.0</span>
-             * <span style="color: #FF0000">Stage_2.0</span>
-             * <span style="color: #FF0000">Stage_3.0</span>
              * <span style="color: #FF0000">Stage_4.0</span>
 
 
@@ -8366,9 +8364,6 @@ cirrhosis_survival_coxph_L1_0_L2_0_explainer = shap.Explainer(cirrhosis_survival
 cirrhosis_survival_coxph_L1_0_L2_0_shap_values = cirrhosis_survival_coxph_L1_0_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:18,  6.92it/s]                         
-    
-
 
 ```python
 ##################################
@@ -8481,7 +8476,7 @@ cirrhosis_survival_coxph_L1_100_L2_0.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-18 04:31:51 UTC</td>
+      <td>2024-07-18 06:55:43 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -9555,9 +9550,6 @@ cirrhosis_survival_coxph_L1_100_L2_0_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_100_L2_0_shap_values = cirrhosis_survival_coxph_L1_100_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:12,  3.66it/s]                         
-    
-
 
 ```python
 ##################################
@@ -9671,7 +9663,7 @@ cirrhosis_survival_coxph_L1_0_L2_100.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-18 04:32:09 UTC</td>
+      <td>2024-07-18 06:55:53 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -10745,9 +10737,6 @@ cirrhosis_survival_coxph_L1_0_L2_100_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_0_L2_100_shap_values = cirrhosis_survival_coxph_L1_0_L2_100_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:15,  4.79it/s]                         
-    
-
 
 ```python
 ##################################
@@ -10861,7 +10850,7 @@ cirrhosis_survival_coxph_L1_50_L2_50.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-18 04:32:27 UTC</td>
+      <td>2024-07-18 06:56:02 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -11935,9 +11924,6 @@ cirrhosis_survival_coxph_L1_50_L2_50_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_50_L2_50_shap_values = cirrhosis_survival_coxph_L1_50_L2_50_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:15,  5.21it/s]                         
-    
-
 
 ```python
 ##################################
@@ -12050,7 +12036,7 @@ cirrhosis_survival_coxph_L1_75_L2_25.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-18 04:32:48 UTC</td>
+      <td>2024-07-18 06:56:11 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -13124,9 +13110,6 @@ cirrhosis_survival_coxph_L1_75_L2_25_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_75_L2_25_shap_values = cirrhosis_survival_coxph_L1_75_L2_25_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:12,  3.47it/s]                         
-    
-
 
 ```python
 ##################################
@@ -13241,7 +13224,7 @@ cirrhosis_survival_coxph_L1_25_L2_75.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-18 04:33:07 UTC</td>
+      <td>2024-07-18 06:56:22 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -14315,9 +14298,6 @@ cirrhosis_survival_coxph_L1_25_L2_75_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_25_L2_75_shap_values = cirrhosis_survival_coxph_L1_25_L2_75_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:14,  5.00it/s]                         
-    
-
 
 ```python
 ##################################
@@ -14338,12 +14318,12 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_25_L2_75_shap_values,
 
 1. In the context of Cox proportional hazards regression, penalties are used to prevent overfitting and improve the generalizability of the model by adding a constraint to the optimization problem. These penalties can help improve the model's predictive performance and interpretability by addressing overfitting and multicollinearity issues.
 
-1. The choice of penalty will depend on a number of factors including interpretability, multicpllinearity handling and variable selection capabilities.
+1. The choice of penalty will depend on a number of factors including interpretability, multicollinearity handling and variable selection capabilities.
     * [No penalty](https://lifelines.readthedocs.io/en/latest/) (no regularization) can lead to overfitting, especially when the number of predictors is large or when there is multicollinearity among the predictors.
     * [Lasso penalty](https://lifelines.readthedocs.io/en/latest/) (L1 regularization) encourages sparsity in the coefficients by setting some coefficients exactly to zero, effectively performing variable selection.
     * [Rdige penalty](https://lifelines.readthedocs.io/en/latest/) (L2 regularization) shrinks the coefficients towards zero but does not set them exactly to zero, which can be beneficial in dealing with multicollinearity among predictors. 
     * [Elastic net penalty](https://lifelines.readthedocs.io/en/latest/) (L1 and L2 regularization) combines the benefits of both Lasso and Ridge penalties, promoting sparsity while also dealing with multicollinearity.
-2. Comparing all results from the penalized conx regression models formulated, the viable models for prediction can be any of the following:
+2. Comparing all results from the penalized cox regression models formulated, the most viable model for prediction was determined as:
     * [Elastic net penalty](https://lifelines.readthedocs.io/en/latest/) (with more weight assigned to L2 than L1 regularization)
         * Demonstrated the best independent cross-validated (**Concordance Index** = 0.8152) and test (**Concordance Index** = 0.8671) model performance 
         * Showed considerable overfit between the train (**Concordance Index** = 0.8501) and cross-validated (**Concordance Index** = 0.8152) model performance
@@ -14353,7 +14333,8 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_25_L2_75_shap_values,
             * <span style="color: #FF0000">Bilirubin</span>
             * <span style="color: #FF0000">Prothrombin</span>
         * Demonstrated good survival profile differentiation between the risk groups
-        * Allows for the estimation of permutation-based variable importance which might aid in better interpretation
+        * Hazard and survival probability estimations for 5 sampled cases demonstrated reasonable profiles
+        * Obtained SHAP values provided an insightful and clear indication of each predictor's impact on the prediction, independent of the penalization.
 
 
 ```python
@@ -14739,6 +14720,8 @@ for container in predictor_plot.containers:
 
 
 # 2. Summary <a class="anchor" id="Summary"></a>
+
+![Project52_Summary.png](attachment:495481c3-67cf-4e5e-b931-7961ec5b546e.png)
 
 # 3. References <a class="anchor" id="References"></a>
 
