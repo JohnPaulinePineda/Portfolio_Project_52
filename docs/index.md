@@ -2,7 +2,7 @@
 # Supervised Learning : Implementing Shapley Additive Explanations for Interpreting Feature Contributions in Penalized Cox Regression
 
 ***
-### John Pauline Pineda <br> <br> *July 19, 2024*
+### John Pauline Pineda <br> <br> *July 18, 2024*
 ***
 
 * [**1. Table of Contents**](#TOC)
@@ -7572,9 +7572,9 @@ cirrhosis_survival_test_modeling.head()
     * <span style="color: #FF0000">l1_ratio</span> = proportion of the L1 versus L2 penalty fixed at a value = 0.00
 3. All 17 variables were used for prediction given the non-zero values of the model coefficients.
 4. Out of all 17 predictors, only 3 variables were statistically significant:
-    * <span style="color: #FF0000">Age</span>
     * <span style="color: #FF0000">Bilirubin</span>
     * <span style="color: #FF0000">Prothrombin</span>
+    * <span style="color: #FF0000">Age</span>
 5. The cross-validated model performance of the model is summarized as follows:
     * **Concordance Index** = 0.8024
 6. The apparent model performance of the model is summarized as follows:
@@ -8476,7 +8476,7 @@ cirrhosis_survival_coxph_L1_100_L2_0.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-18 06:55:43 UTC</td>
+      <td>2024-07-18 07:12:40 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -9584,9 +9584,9 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_100_L2_0_shap_values,
     * <span style="color: #FF0000">l1_ratio</span> = proportion of the L1 versus L2 penalty fixed at a value = 0.00
 3. All 17 variables were used for prediction given the non-zero values of the model coefficients.
 4. Out of all 17 predictors, only 3 variables were statistically significant:
-    * <span style="color: #FF0000">Age</span>
     * <span style="color: #FF0000">Bilirubin</span>
     * <span style="color: #FF0000">Prothrombin</span>
+    * <span style="color: #FF0000">Age</span>
 5. The cross-validated model performance of the model is summarized as follows:
     * **Concordance Index** = 0.8099
 6. The apparent model performance of the model is summarized as follows:
@@ -9663,7 +9663,7 @@ cirrhosis_survival_coxph_L1_0_L2_100.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-18 06:55:53 UTC</td>
+      <td>2024-07-18 07:12:50 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -10850,7 +10850,7 @@ cirrhosis_survival_coxph_L1_50_L2_50.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-18 06:56:02 UTC</td>
+      <td>2024-07-18 07:12:59 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -12036,7 +12036,7 @@ cirrhosis_survival_coxph_L1_75_L2_25.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-18 06:56:11 UTC</td>
+      <td>2024-07-18 07:13:10 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -13144,9 +13144,9 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_75_L2_25_shap_values,
     * <span style="color: #FF0000">l1_ratio</span> = proportion of the L1 versus L2 penalty fixed at a value = 0.25
 3. Only 12 out of the 17 variables were used for prediction given the non-zero values of the model coefficients.
 4. Out of all 12 predictors, only 3 variables were statistically significant:
-    * <span style="color: #FF0000">Age</span>
     * <span style="color: #FF0000">Bilirubin</span>
     * <span style="color: #FF0000">Prothrombin</span>
+    * <span style="color: #FF0000">Age</span>
 5. The cross-validated model performance of the model is summarized as follows:
     * **Concordance Index** = 0.8152
 6. The apparent model performance of the model is summarized as follows:
@@ -13224,7 +13224,7 @@ cirrhosis_survival_coxph_L1_25_L2_75.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-07-18 06:56:22 UTC</td>
+      <td>2024-07-18 07:13:20 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -14324,17 +14324,17 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_25_L2_75_shap_values,
     * [Rdige penalty](https://lifelines.readthedocs.io/en/latest/) (L2 regularization) shrinks the coefficients towards zero but does not set them exactly to zero, which can be beneficial in dealing with multicollinearity among predictors. 
     * [Elastic net penalty](https://lifelines.readthedocs.io/en/latest/) (L1 and L2 regularization) combines the benefits of both Lasso and Ridge penalties, promoting sparsity while also dealing with multicollinearity.
 2. Comparing all results from the penalized cox regression models formulated, the most viable model for prediction was determined as:
-    * [Elastic net penalty](https://lifelines.readthedocs.io/en/latest/) (with more weight assigned to L2 than L1 regularization)
+    * [Elastic net penalty](https://lifelines.readthedocs.io/en/latest/) (optimized for a heavily weighted L2 over L1 regularization)
         * Demonstrated the best independent cross-validated (**Concordance Index** = 0.8152) and test (**Concordance Index** = 0.8671) model performance 
         * Showed considerable overfit between the train (**Concordance Index** = 0.8501) and cross-validated (**Concordance Index** = 0.8152) model performance
         * Selected a sufficient number of predictors (12 out of 17)
         * Identified a sufficient number of statistically significant predictors (3 out of 12)
-            * <span style="color: #FF0000">Age</span>
             * <span style="color: #FF0000">Bilirubin</span>
             * <span style="color: #FF0000">Prothrombin</span>
+            * <span style="color: #FF0000">Age</span>
         * Demonstrated good survival profile differentiation between the risk groups
-        * Hazard and survival probability estimations for 5 sampled cases demonstrated reasonable profiles
-        * Obtained SHAP values provided an insightful and clear indication of each predictor's impact on the prediction, independent of the penalization.
+        * Estimated resonable hazard and survival probability profile for 5 sampled cases
+        * Obtained **SHAP values** provided an insightful and clear indication of each predictor's impact on the prediction, independent of the penalization
 
 
 ```python
@@ -14721,7 +14721,7 @@ for container in predictor_plot.containers:
 
 # 2. Summary <a class="anchor" id="Summary"></a>
 
-![Project52_Summary.png](attachment:495481c3-67cf-4e5e-b931-7961ec5b546e.png)
+![Project52_Summary.png](attachment:5db268e2-4ddf-41bf-84d4-9dded1093043.png)
 
 # 3. References <a class="anchor" id="References"></a>
 
