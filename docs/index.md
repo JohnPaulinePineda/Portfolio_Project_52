@@ -8370,7 +8370,7 @@ cirrhosis_survival_coxph_L1_0_L2_0_explainer = shap.Explainer(cirrhosis_survival
 cirrhosis_survival_coxph_L1_0_L2_0_shap_values = cirrhosis_survival_coxph_L1_0_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:19,  6.54it/s]                         
+    PermutationExplainer explainer: 219it [00:18,  6.11it/s]                         
     
 
 
@@ -8489,7 +8489,7 @@ cirrhosis_survival_coxph_L1_100_L2_0.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-08-02 06:11:56 UTC</td>
+      <td>2024-08-02 06:20:15 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -9563,7 +9563,7 @@ cirrhosis_survival_coxph_L1_100_L2_0_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_100_L2_0_shap_values = cirrhosis_survival_coxph_L1_100_L2_0_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:15,  5.57it/s]                         
+    PermutationExplainer explainer: 219it [00:15,  4.72it/s]                         
     
 
 
@@ -9685,7 +9685,7 @@ cirrhosis_survival_coxph_L1_0_L2_100.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-08-02 06:12:17 UTC</td>
+      <td>2024-08-02 06:20:36 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -10759,7 +10759,7 @@ cirrhosis_survival_coxph_L1_0_L2_100_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_0_L2_100_shap_values = cirrhosis_survival_coxph_L1_0_L2_100_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:14,  4.20it/s]                         
+    PermutationExplainer explainer: 219it [00:15,  5.19it/s]                         
     
 
 
@@ -10880,7 +10880,7 @@ cirrhosis_survival_coxph_L1_50_L2_50.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-08-02 06:12:34 UTC</td>
+      <td>2024-08-02 06:20:55 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -11954,7 +11954,7 @@ cirrhosis_survival_coxph_L1_50_L2_50_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_50_L2_50_shap_values = cirrhosis_survival_coxph_L1_50_L2_50_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:14,  4.90it/s]                         
+    PermutationExplainer explainer: 219it [00:14,  4.60it/s]                         
     
 
 
@@ -12073,7 +12073,7 @@ cirrhosis_survival_coxph_L1_75_L2_25.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-08-02 06:12:55 UTC</td>
+      <td>2024-08-02 06:21:15 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -13147,7 +13147,7 @@ cirrhosis_survival_coxph_L1_75_L2_25_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_75_L2_25_shap_values = cirrhosis_survival_coxph_L1_75_L2_25_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:16,  5.20it/s]                         
+    PermutationExplainer explainer: 219it [00:13,  3.46it/s]                         
     
 
 
@@ -13270,7 +13270,7 @@ cirrhosis_survival_coxph_L1_25_L2_75.print_summary()
     </tr>
     <tr>
       <th>time fit was run</th>
-      <td>2024-08-02 06:13:17 UTC</td>
+      <td>2024-08-02 06:21:34 UTC</td>
     </tr>
   </tbody>
 </table>
@@ -14344,7 +14344,7 @@ cirrhosis_survival_coxph_L1_25_L2_75_explainer = shap.Explainer(cirrhosis_surviv
 cirrhosis_survival_coxph_L1_25_L2_75_shap_values = cirrhosis_survival_coxph_L1_25_L2_75_explainer(cirrhosis_survival_train_modeling.drop(columns=["N_Days", "Status"]))
 ```
 
-    PermutationExplainer explainer: 219it [00:14,  4.77it/s]                         
+    PermutationExplainer explainer: 219it [00:14,  4.50it/s]                         
     
 
 
@@ -14366,24 +14366,26 @@ shap.summary_plot(cirrhosis_survival_coxph_L1_25_L2_75_shap_values,
 ## 1.7. Consolidated Findings <a class="anchor" id="1.7"></a>
 
 1. In the context of Cox proportional hazards regression, penalties are used to prevent overfitting and improve the generalizability of the model by adding a constraint to the optimization problem. These penalties can help improve the model's predictive performance and interpretability by addressing overfitting and multicollinearity issues.
-
-1. The choice of penalty will depend on a number of factors including interpretability, multicollinearity handling and variable selection capabilities.
+2. The choice of penalty will depend on a number of factors including interpretability, multicollinearity handling and variable selection capabilities.
     * [No penalty](https://lifelines.readthedocs.io/en/latest/) (no regularization) can lead to overfitting, especially when the number of predictors is large or when there is multicollinearity among the predictors.
     * [Lasso penalty](https://lifelines.readthedocs.io/en/latest/) (L1 regularization) encourages sparsity in the coefficients by setting some coefficients exactly to zero, effectively performing variable selection.
     * [Ridge penalty](https://lifelines.readthedocs.io/en/latest/) (L2 regularization) shrinks the coefficients towards zero but does not set them exactly to zero, which can be beneficial in dealing with multicollinearity among predictors. 
     * [Elastic net penalty](https://lifelines.readthedocs.io/en/latest/) (L1 and L2 regularization) combines the benefits of both Lasso and Ridge penalties, promoting sparsity while also dealing with multicollinearity.
-2. Comparing all results from the penalized cox regression models formulated, the most viable model for prediction was determined as:
+3. Comparing all results from the penalized cox regression models formulated, the most viable model for prediction was determined as:
     * [Elastic net penalty](https://lifelines.readthedocs.io/en/latest/) (optimized for a heavily weighted L2 over L1 regularization)
         * Demonstrated the best independent cross-validated (**Concordance Index** = 0.8152) and test (**Concordance Index** = 0.8671) model performance 
         * Showed considerable overfit between the train (**Concordance Index** = 0.8501) and cross-validated (**Concordance Index** = 0.8152) model performance
         * Selected a sufficient number of predictors (12 out of 17)
         * Identified a sufficient number of statistically significant predictors (3 out of 12)
-            * <span style="color: #FF0000">Bilirubin</span>
-            * <span style="color: #FF0000">Prothrombin</span>
-            * <span style="color: #FF0000">Age</span>
+            * <span style="color: #FF0000">Bilirubin</span>: Increase in value associated with a more elevated hazard 
+            * <span style="color: #FF0000">Prothrombin</span>: Increase in value associated with a more elevated hazard 
+            * <span style="color: #FF0000">Age</span>: Increase in value associated with a more elevated hazard 
         * Demonstrated good survival profile differentiation between the risk groups
         * Estimated resonable hazard and survival probability profile for 5 sampled cases
         * Obtained **SHAP values** provided an insightful and clear indication of each predictor's impact on the prediction, independent of the penalization
+            * Higher values for <span style="color: #FF0000">Bilirubin</span> result to increased event risk
+            * Higher values for <span style="color: #FF0000">Prothrombin</span> result to increased event risk
+            * Higher values for <span style="color: #FF0000">Age</span> result to increased event risk
 
 
 ```python
