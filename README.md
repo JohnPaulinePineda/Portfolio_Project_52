@@ -4,4 +4,4 @@
 
 This [project](https://johnpaulinepineda.github.io/Portfolio_Project_52/) explores different variations of penalty functions as applied on models for right-censored time-to-event responses. Using the standard Cox Proportional Hazards Regression structure as reference, regularization methods including Least Absolute Shrinkage and Selection Operator, Ridge and Elastic Net were used to aid in improving the model's predictive performance and interpretability by addressing overfitting and multicollinearity issues. The resulting predictions derived from the candidate models were evaluated in terms of their discrimination power using the concordance index metric. Predictor selection and effects were evaluated using the coefficient magnitude and hazard ratio. Feature impact on model output were assessed using Shapley Additive Explanations. The differences in survival probabilities for different risk groups were additionally examined using the Kaplan-Meier survival curves. The survival probability and hazard profiles for sampled individual cases were estimated. 
 
-<img src="docs/Project52_Summary.png?raw=true"/>
+<img src="images/Project52_Summary.png?raw=true"/>
